@@ -30,10 +30,10 @@ public class PostDbContext : DbContext
         {
             entity.HasKey(u => u.UserId);
             entity.Property(u => u.UserName).IsRequired();
-            entity.HasIndex(u => u.UserName).IsUnique();
+            entity.HasIndex(x => x.UserName).IsUnique();
             entity.Property(u => u.Password).IsRequired();
             entity.Property(u => u.Email).IsRequired();
-            entity.HasIndex(u => u.Email).IsUnique();
+            entity.HasIndex(x => x.Email).IsUnique();
             entity.Property(u => u.FirstName);
             entity.Property(u => u.LastName);
             entity.Property(u => u.City).IsRequired();
