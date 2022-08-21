@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSqlite<PostDbContext>("Data Source=blog_API.db");
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 

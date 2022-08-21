@@ -16,10 +16,8 @@ public class User
     [Required]
     [EmailAddress]
     public string? Email { get; set; }
-    [Required]
     public string? City { get; set; }
     public string? State { get; set; }
-    [Required]
     public string? Country { get; set; } = "USA";
     public DateTime? Created { get; set; } =  DateTime.Now;
 

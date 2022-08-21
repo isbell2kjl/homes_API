@@ -20,7 +20,7 @@ public class PostDbContext : DbContext
             entity.HasKey(p => p.PostId);
             entity.Property(p => p.Title);
             entity.Property(p => p.Content).IsRequired();
-            entity.Property(p => p.Posted).IsRequired();
+            entity.Property(p => p.Posted);
             entity.HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId_fk);
@@ -36,9 +36,9 @@ public class PostDbContext : DbContext
             entity.HasIndex(x => x.Email).IsUnique();
             entity.Property(u => u.FirstName);
             entity.Property(u => u.LastName);
-            entity.Property(u => u.City).IsRequired();
+            entity.Property(u => u.City);
             entity.Property(u => u.State);
-            entity.Property(u => u.Country).IsRequired();
+            entity.Property(u => u.Country);
             entity.Property(u => u.Created);
             
         });
