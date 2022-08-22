@@ -52,11 +52,12 @@ C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\obj\Debug\net6.
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\obj\Debug\net6.0\blog_API.pdb
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\obj\Debug\net6.0\blog_API.genruntimeconfig.cache
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\obj\Debug\net6.0\ref\blog_API.dll
-C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\package-lock.json
-C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\package.json
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\BCrypt.Net-Next.dll
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\keith\bethel-tech\backend-dotnet\final-project\blog_API\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll

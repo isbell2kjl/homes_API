@@ -42,8 +42,7 @@ public class AuthService : IAuthService
         var claims = new Claim[]
         {
         new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? ""),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? "")
+        new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? "")
         };
 
         // Create token
@@ -62,7 +61,7 @@ public class AuthService : IAuthService
     public string SignIn(SignInRequest request)
     {
 
-        var user = _context!.Users!.SingleOrDefault(x => x.Email == request.Email);
+        var user = _context!.Users!.SingleOrDefault(x => x.UserName == request.UserName);
         var verified = false;
 
 
@@ -80,5 +79,32 @@ public class AuthService : IAuthService
 
         // Create & return JWT
         return BuildToken(user)!;
+    }
+
+    public IEnumerable<User> GetAllUsers()
+    {
+        return _context!.Users!.ToList();
+    }
+
+    public User? GetUserById(int userId)
+    {
+        return _context!.Users!.SingleOrDefault(c => c.UserId == userId);
+    }
+
+    public User? UpdateUser(User newUser)
+    {
+        var originalUser= _context!.Users!.Find(newUser.UserId);
+        if (originalUser != null) {
+            originalUser.UserName = newUser.UserName;
+            originalUser.Password = newUser.Password;
+            originalUser.Email = newUser.Email;
+            originalUser.LastName = newUser.LastName;
+            originalUser.FirstName = newUser.FirstName;
+            originalUser.City = newUser.City;
+            originalUser.State = newUser.State;
+            originalUser.Country = newUser.Country;
+            _context.SaveChanges();
+        }
+        return originalUser;
     }
 }

@@ -32,7 +32,7 @@ public class PostDbContext : DbContext
             entity.Property(u => u.UserName).IsRequired();
             entity.HasIndex(x => x.UserName).IsUnique();
             entity.Property(u => u.Password).IsRequired();
-            entity.Property(u => u.Email).IsRequired();
+            entity.Property(u => u.Email);
             entity.HasIndex(x => x.Email).IsUnique();
             entity.Property(u => u.FirstName);
             entity.Property(u => u.LastName);
