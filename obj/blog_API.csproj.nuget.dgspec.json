@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj": {}
+    "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj": {
+    "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj",
+        "projectUniqueName": "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj",
         "projectName": "blog_API",
-        "projectPath": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj",
+        "projectPath": "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj",
         "packagesPath": "C:\\Users\\keith\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\obj\\",
+        "outputPath": "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\keith\\AppData\\Roaming\\NuGet\\NuGet.Config"

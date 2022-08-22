@@ -42,7 +42,7 @@ builder.Services.AddAuthentication(options =>
 }
 );
 builder.Services.AddSwaggerGen(c => {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "l11_tokens", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "blog_API_tokens", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         In = ParameterLocation.Header, 
         Description = "Please insert JWT with Bearer into field",
