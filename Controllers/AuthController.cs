@@ -50,7 +50,7 @@ public class AuthController : ControllerBase
         return Ok(token);
     }
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetUsers()
+    public ActionResult<IEnumerable<object>> GetUsers()
     {
         return Ok(_authService.GetAllUsers());
     }

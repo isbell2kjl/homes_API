@@ -4,6 +4,7 @@ using blog_API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddSqlite<PostDbContext>("Data Source=blog_API.db");
 builder.Services.AddScoped<IPostRepository, PostRepository>();
@@ -73,7 +77,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(builder => builder
-    .WithOrigins("http://localhost:4200", "http://localhost:3000")
+    .WithOrigins("http://localhost:8100","http://localhost:4200", "http://localhost:3000")
     .AllowAnyHeader()
     .AllowAnyMethod());
     

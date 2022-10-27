@@ -26,6 +26,8 @@ public class PostDbContext : DbContext
             .HasForeignKey(p => p.UserId_fk);
         });
 
+        // modelBuilder.Entity<Post>().Navigation(e => e.User).AutoInclude();
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(u => u.UserId);

@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace blog_API.Repositories;
 
@@ -81,11 +82,36 @@ public class AuthService : IAuthService
         return BuildToken(user)!;
     }
 
-    public IEnumerable<User> GetAllUsers()
-    {
-        return _context!.Users!.ToList();
-    }
+    // public IEnumerable<User> GetAllUsers()
+    // {
+    //     return _context!.Users!.ToList();
+    // }
+    //To avoid circular reference, combination of ideas from these websites:
+    //https://khalidabuhakmeh.com/ef-core-and-aspnet-core-cycle-issue-and-solution
+    //https://qawithexperts.com/article/asp.net/ways-to-fix-circular-reference-detected-error-in-entity-fram/63
 
+    public IEnumerable<object> GetAllUsers()
+    {
+        return _context!
+            .Users!
+            .Include(u => u.Posts).
+            Select(u => new
+            {
+                u.UserId,
+                u.UserName,
+                u.City,
+                u.State,
+                u.Country,
+                u.Created,
+                Posts = u.Posts!.Select(p => new{
+                    p.PostId,
+                    p.Content,
+                    p.Posted
+                })
+            })
+                .ToList();
+
+    }
     public User? GetUserById(int userId)
     {
         return _context!.Users!.SingleOrDefault(c => c.UserId == userId);
@@ -93,8 +119,9 @@ public class AuthService : IAuthService
 
     public User? UpdateUser(User newUser)
     {
-        var originalUser= _context!.Users!.Find(newUser.UserId);
-        if (originalUser != null) {
+        var originalUser = _context!.Users!.Find(newUser.UserId);
+        if (originalUser != null)
+        {
             originalUser.UserName = newUser.UserName;
             originalUser.Password = newUser.Password;
             originalUser.Email = newUser.Email;

@@ -6,7 +6,8 @@ public interface IAuthService
 {
     User CreateUser(User user);
     string SignIn(SignInRequest request);
-     IEnumerable<User> GetAllUsers();
+    //  IEnumerable<User> GetAllUsers();
+    IEnumerable<object> GetAllUsers();
     User? GetUserById(int userId);
     User? UpdateUser(User newUser);
 }

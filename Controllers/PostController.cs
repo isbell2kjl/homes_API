@@ -20,7 +20,7 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Post>> GetPosts()
+    public ActionResult<IEnumerable<object>> GetPosts()
     {
         return Ok(_postRepository.GetAllPosts());
     }
