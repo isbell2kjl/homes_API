@@ -5,9 +5,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace blog_API.Repositories;
+
 
 public class AuthService : IAuthService
 {
@@ -20,7 +21,8 @@ public class AuthService : IAuthService
         _config = config;
     }
 
-    public User CreateUser(User user)
+
+    public User SignUp(User user)
     {
         // TODO: Hash Password
         var passwordHash = bcrypt.HashPassword(user.Password);
@@ -55,18 +57,17 @@ public class AuthService : IAuthService
         // Encode token
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
+
         return encodedJwt;
     }
 
-
-    public string SignIn(SignInRequest request)
+    //modified SignIn from tutorial:
+    // //https://jasonwatmore.com/post/2021/12/14/net-6-jwt-authentication-tutorial-with-example-api#user-cs
+    public SignInResponse SignIn(SignInRequest request)
     {
 
         var user = _context!.Users!.SingleOrDefault(x => x.UserName == request.UserName);
         var verified = false;
-
-
-
 
         if (user != null)
         {
@@ -75,63 +76,13 @@ public class AuthService : IAuthService
 
         if (user == null || !verified)
         {
-            return String.Empty;
+            return null!;
         }
 
         // Create & return JWT
-        return BuildToken(user)!;
+        var token = BuildToken(user)!;
+
+        return new SignInResponse(user, token);
     }
 
-    // public IEnumerable<User> GetAllUsers()
-    // {
-    //     return _context!.Users!.ToList();
-    // }
-    //To avoid circular reference, combination of ideas from these websites:
-    //https://khalidabuhakmeh.com/ef-core-and-aspnet-core-cycle-issue-and-solution
-    //https://qawithexperts.com/article/asp.net/ways-to-fix-circular-reference-detected-error-in-entity-fram/63
-
-    public IEnumerable<object> GetAllUsers()
-    {
-        return _context!
-            .Users!
-            .Include(u => u.Posts).
-            Select(u => new
-            {
-                u.UserId,
-                u.UserName,
-                u.City,
-                u.State,
-                u.Country,
-                u.Created,
-                Posts = u.Posts!.Select(p => new{
-                    p.PostId,
-                    p.Content,
-                    p.Posted
-                })
-            })
-                .ToList();
-
-    }
-    public User? GetUserById(int userId)
-    {
-        return _context!.Users!.SingleOrDefault(c => c.UserId == userId);
-    }
-
-    public User? UpdateUser(User newUser)
-    {
-        var originalUser = _context!.Users!.Find(newUser.UserId);
-        if (originalUser != null)
-        {
-            originalUser.UserName = newUser.UserName;
-            originalUser.Password = newUser.Password;
-            originalUser.Email = newUser.Email;
-            originalUser.LastName = newUser.LastName;
-            originalUser.FirstName = newUser.FirstName;
-            originalUser.City = newUser.City;
-            originalUser.State = newUser.State;
-            originalUser.Country = newUser.Country;
-            _context.SaveChanges();
-        }
-        return originalUser;
-    }
 }

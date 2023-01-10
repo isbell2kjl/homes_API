@@ -2,10 +2,11 @@ using blog_API.Models;
 using blog_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace blog_API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
@@ -19,62 +20,28 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Route("signup")]
-    public ActionResult CreateUser(User user)
+    public ActionResult SignUp(User user)
     {
         if (user == null || !ModelState.IsValid)
         {
             return BadRequest();
         }
-        _authService.CreateUser(user);
+        _authService.SignUp(user);
         return NoContent();
     }
     [HttpPost]
     [Route("signin")]
     // public ActionResult<string> SignIn(string email, string password)
-    public ActionResult<string> SignIn(SignInRequest request)
+    public ActionResult SignIn(SignInRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
-        {
-            return BadRequest();
-        }
+        var response = _authService.SignIn(request);
 
-        var token = _authService.SignIn(request);
+         if (response == null)
+            return BadRequest(new { message = "Username or password is incorrect" });
+        
+        return Ok(response);
 
-
-
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            return Unauthorized();
-        }
-
-        return Ok(token);
     }
-    [HttpGet]
-    public ActionResult<IEnumerable<object>> GetUsers()
-    {
-        return Ok(_authService.GetAllUsers());
-    }
-
-     [HttpGet]
-    [Route("{userId:int}")]
-    public ActionResult<User> GetUserById(int userId)
-    {
-        var user = _authService.GetUserById(userId);
-        if (user == null)
-        {
-            return NotFound();
-        }
-        return Ok(user);
-    }
-
-    [HttpPut]
-    [Route("{userId:int}")]
-    public ActionResult<User> UpdateUser(User user)
-    {
-        if (!ModelState.IsValid || user == null)
-        {
-            return BadRequest();
-        }
-        return Ok(_authService.UpdateUser(user));
-    }
+    
 }
+

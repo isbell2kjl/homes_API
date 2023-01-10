@@ -30,6 +30,7 @@ public class PostRepository : IPostRepository
         }
     }
 
+    //return all posts from all users.
     public IEnumerable<object> GetAllPosts()
     {
         return _context.Posts!
@@ -45,6 +46,23 @@ public class PostRepository : IPostRepository
                 .ToList();
     }
 
+    //Return only the posts by a specific user based on the UserId_fk property of the Post model.
+    public IEnumerable<object> GetUserPosts(int userId)
+    {
+        return _context.Posts!
+        .Include(user => user.User).
+            Select(p => new
+            {
+                p.PostId,
+                p.Content,
+                p.Posted,
+                p.UserId_fk,
+                p.User!.UserName
+            })
+            .Where(post => post.UserId_fk == userId)
+                .ToList();
+    }
+
     public Post? GetPostById(int postId)
     {
         return _context.Posts!.SingleOrDefault(p => p.PostId == postId);
@@ -55,9 +73,9 @@ public class PostRepository : IPostRepository
         var originalPost = _context.Posts!.Find(newPost.PostId);
         if (originalPost != null)
         {
-            originalPost.Title = newPost.Title;
+            // originalPost.Title = newPost.Title;
             originalPost.Content = newPost.Content;
-            originalPost.Posted = newPost.Posted;
+            // originalPost.Posted = newPost.Posted;
             _context.SaveChanges();
         }
         return originalPost;

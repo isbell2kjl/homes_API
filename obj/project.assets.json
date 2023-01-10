@@ -1792,11 +1792,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj",
+      "projectUniqueName": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\blog_API.csproj",
       "projectName": "blog_API",
-      "projectPath": "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\blog_API.csproj",
+      "projectPath": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\blog_API.csproj",
       "packagesPath": "C:\\Users\\keith\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\blog_API\\obj\\",
+      "outputPath": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\keith\\AppData\\Roaming\\NuGet\\NuGet.Config"

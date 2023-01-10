@@ -5,7 +5,7 @@ namespace blog_API.Models;
 
 public class User
 {
-    [JsonIgnore]
+    // [JsonIgnore]
     public int UserId { get; set; }
     [Required]
     public string? UserName { get; set; }
@@ -18,7 +18,7 @@ public class User
     public string? State { get; set; }
     public string? Country { get; set; } = "USA";
     public DateTime? Created { get; set; } =  DateTime.Now;
-
+[JsonIgnore]
     public List<Post>? Posts { get; set; }
-    
+
 }

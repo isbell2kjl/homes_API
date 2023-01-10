@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace blog_API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class PostController : ControllerBase
 {
     private readonly ILogger<PostController> _logger;
@@ -23,6 +23,13 @@ public class PostController : ControllerBase
     public ActionResult<IEnumerable<object>> GetPosts()
     {
         return Ok(_postRepository.GetAllPosts());
+    }
+
+    [HttpGet]
+    [Route("userPost/{userId:int}")]
+    public ActionResult<IEnumerable<object>> GetUPosts(int userId)
+    {
+        return Ok(_postRepository.GetUserPosts(userId));
     }
 
     [HttpGet]
@@ -69,4 +76,5 @@ public class PostController : ControllerBase
         _postRepository.DeletePostById(postId);
         return NoContent();
     }
+
 }
