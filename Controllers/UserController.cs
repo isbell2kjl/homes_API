@@ -26,6 +26,30 @@ public class UserController : ControllerBase
         return Ok(_userRepository.GetAllUsers());
     }
 
+//search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
+    [HttpGet]
+    [Route("{search}")]
+    public async Task<ActionResult<IEnumerable<User>>> Search(string name)
+    {
+        try
+        {
+            var result = await (_userRepository.Search(name));
+
+            if (result.Any()) 
+            {
+                return Ok(result);
+            }    
+        }
+        catch (Exception)
+        {
+            return NotFound(); 
+        }
+        return StatusCode(StatusCodes.Status500InternalServerError,
+        "Error retrieving data from the database");
+
+    }
+
+
     [HttpGet]
     [Route("{userId:int}")]
     public ActionResult<User> GetUserById(int userId)
@@ -63,8 +87,8 @@ public class UserController : ControllerBase
         }
         // if (claimId == userId)
         // {
-            _userRepository.UpdateUser(userId, editUser);
-            return Ok(new { message = "User updated" });
+        _userRepository.UpdateUser(userId, editUser);
+        return Ok(new { message = "User updated" });
         // }
         // else
         // {

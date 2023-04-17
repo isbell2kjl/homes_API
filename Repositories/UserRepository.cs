@@ -71,11 +71,28 @@ public class UserRepository : IUserRepository
         return _context!.Users!.SingleOrDefault(c => c.UserId == userId);
     }
 
+    public async Task<IEnumerable<User>> Search(string name)
+    {
+        IQueryable<User> query = _context.Users!;
+
+        if (!string.IsNullOrEmpty(name))
+        {
+            query = query!.Where(u => u.FirstName!.Contains(name)
+                    || u.LastName!.Contains(name));
+        }
+
+        return await query.ToListAsync();
+
+    }
+
     public void UpdateUser(int userId, UpdateRequest editUser)
     {
         var originalUser = GetUserById(userId)!;
 
-        // // hash password if it was entered
+        //not working right.  To change password in Postman, temporarily enable the following:
+        //  However this won't work on the frontend.
+
+        // hash password if it was entered
         // if (!string.IsNullOrEmpty(editUser.Password))
         // {
         //     originalUser.Password = bcrypt.HashPassword(editUser.Password);
