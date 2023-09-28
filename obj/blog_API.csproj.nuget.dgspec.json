@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\blog_API.csproj": {}
+    "/home/keith/bethel-tech/backend-dotnet/final-project/blog_API/blog_API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\blog_API.csproj": {
+    "/home/keith/bethel-tech/backend-dotnet/final-project/blog_API/blog_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\blog_API.csproj",
+        "projectUniqueName": "/home/keith/bethel-tech/backend-dotnet/final-project/blog_API/blog_API.csproj",
         "projectName": "blog_API",
-        "projectPath": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\blog_API.csproj",
-        "packagesPath": "C:\\Users\\keith\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\keith\\bethel-tech\\backend-dotnet\\final-project\\test\\blog_API\\obj\\",
+        "projectPath": "/home/keith/bethel-tech/backend-dotnet/final-project/blog_API/blog_API.csproj",
+        "packagesPath": "/home/keith/.nuget/packages/",
+        "outputPath": "/home/keith/bethel-tech/backend-dotnet/final-project/blog_API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\keith\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/keith/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -83,7 +83,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/opt/dotnet/sdk/6.0.100/RuntimeIdentifierGraph.json"
         }
       }
     }
