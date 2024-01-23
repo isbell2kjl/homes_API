@@ -8,11 +8,27 @@ public class PostDbContext : DbContext
 {
     public DbSet<Post>? Posts { get; set; }
     public DbSet<User>? Users { get; set; }
-    public PostDbContext(DbContextOptions<PostDbContext> options)
-        : base(options)
-    {
-    }
     
+    // public PostDbContext(DbContextOptions<PostDbContext> options)
+    //     : base(options)
+    // {
+    // }
+
+    protected readonly IConfiguration Configuration;
+
+    public PostDbContext(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
+
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        // connect to mysql with connection string from app settings
+        var connectionString = Configuration.GetConnectionString("Default");
+        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

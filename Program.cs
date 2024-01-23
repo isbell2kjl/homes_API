@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -15,7 +16,11 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSqlite<PostDbContext>("Data Source=blog_API.db");
+builder.Services.AddDbContext<PostDbContext>();
+ 
+// builder.Services.AddMySqlDataSource(builder.Configuration.GetConnectionString("Default")!);
+
+// builder.Services.AddSqlite<PostDbContext>("Data Source=blog_API.db");
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

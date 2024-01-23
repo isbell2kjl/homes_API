@@ -1,0 +1,6 @@
+#Ignore any files in /bin and /obj Folders
+**/bin/*
+**/obj/*
+
+#Ignore all database files
+*.db
