@@ -73,9 +73,10 @@ public class PostRepository : IPostRepository
         var originalPost = _context.Posts!.Find(newPost.PostId);
         if (originalPost != null)
         {
-            // originalPost.Title = newPost.Title;
+            originalPost.Title = newPost.Title;
             originalPost.Content = newPost.Content;
-            // originalPost.Posted = newPost.Posted;
+            originalPost.PhotoURL = newPost.PhotoURL;
+            originalPost.Posted = DateTime.Now;
             _context.SaveChanges();
         }
         return originalPost;
