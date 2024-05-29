@@ -8,7 +8,8 @@ public class PostDbContext : DbContext
 {
     public DbSet<Post>? Posts { get; set; }
     public DbSet<User>? Users { get; set; }
-    
+    public DbSet<Comment>? Comments {get; set;}
+
     // public PostDbContext(DbContextOptions<PostDbContext> options)
     //     : base(options)
     // {
@@ -37,11 +38,24 @@ public class PostDbContext : DbContext
         {
             entity.HasKey(p => p.PostId);
             entity.Property(p => p.Title);
+            entity.Property(p => p.PhotoURL);
             entity.Property(p => p.Content).IsRequired();
             entity.Property(p => p.Posted);
             entity.HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId_fk);
+        });
+
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.HasKey(c => c.ComId);
+            entity.Property(c => c.Task);
+            entity.Property(c => c.Text).IsRequired();
+            entity.Property(c => c.ComDate);
+            entity.Property(c =>c.UsrId_fk);
+            entity.HasOne(c => c.Post)
+            .WithMany(p => p.Comments)
+            .HasForeignKey(c => c.PostId_fk);
         });
 
         // modelBuilder.Entity<Post>().Navigation(e => e.User).AutoInclude();
@@ -52,7 +66,7 @@ public class PostDbContext : DbContext
             entity.Property(u => u.UserName).IsRequired();
             entity.HasIndex(x => x.UserName).IsUnique();
             entity.Property(u => u.Password).IsRequired();
-            entity.Property(u => u.Email);
+            entity.Property(u => u.Email).IsRequired();
             entity.HasIndex(x => x.Email).IsUnique();
             entity.Property(u => u.FirstName);
             entity.Property(u => u.LastName);
@@ -60,6 +74,8 @@ public class PostDbContext : DbContext
             entity.Property(u => u.State);
             entity.Property(u => u.Country);
             entity.Property(u => u.Created);
+            entity.Property(u => u.ResetToken);
+            entity.Property(u => u.ResetTokenExpires);
             
         });
     }
