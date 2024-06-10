@@ -23,6 +23,7 @@ builder.Services.AddDbContext<PostDbContext>();
 // builder.Services.AddSqlite<PostDbContext>("Data Source=blog_API.db");
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var secretKey = builder.Configuration["TokenSecret"];

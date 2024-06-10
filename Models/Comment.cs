@@ -14,6 +14,7 @@ public class Comment
     public int PostId_fk { get; set; }
     public int UsrId_fk { get; set; }
     public Post? Post { get; set; }
+    public User? User { get; set; }
 
 
 }

@@ -23,7 +23,11 @@ public class User
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
 
-[JsonIgnore]
+// [JsonIgnore]
     public List<Post>? Posts { get; set; }
+
+// [JsonIgnore]
+
+    public List<Comment>? Comments {get; set;}
 
 }
