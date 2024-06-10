@@ -42,6 +42,7 @@ public class CommentRepository : ICommentRepository
                 c.Text,
                 c.ComDate,
                 c.UsrId_fk,
+                c.User!.UserName,
                 c.PostId_fk
             })
                 .ToList();
@@ -59,6 +60,7 @@ public class CommentRepository : ICommentRepository
                 c.Text,
                 c.ComDate,
                 c.UsrId_fk,
+                c.User!.UserName,
                 c.PostId_fk
             })
             .Where(comment => comment.PostId_fk == postId)

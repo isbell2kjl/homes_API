@@ -24,48 +24,50 @@ public class UserRepository : IUserRepository
         }
     }
 
-    public IEnumerable<User> GetAllUsers()
-    {
+    // public IEnumerable<User> GetAllUsers()
+    // {
 
-        return _context.Users!.ToList();
+    //     return _context.Users!.ToList();
 
-    }
+    // }
 
     //To avoid circular reference, combination of ideas from these websites:
     //https://khalidabuhakmeh.com/ef-core-and-aspnet-core-cycle-issue-and-solution
     //https://qawithexperts.com/article/asp.net/ways-to-fix-circular-reference-detected-error-in-entity-fram/63
 
-    // public IEnumerable<object> GetAllUsers()
-    // {
-    //     return _context!
-    //         .Users!
-    //         .Include(u => u.Posts)
+    public IEnumerable<object> GetAllUsers()
+    {
+        return _context!
+            .Users!
+            .Include(u => u.Posts)
+             
 
-    //         .Select(u => new
-    //         {
-    //             u.UserId,
-    //             u.UserName,
-    //             u.Email,
-    //             u.FirstName,
-    //             u.LastName,
-    //             u.City,
-    //             u.State,
-    //             u.Country,
-    //             u.Created,
+            .Select(u => new
+            {
+                u.UserId,
+                u.UserName,
+                u.Email,
+                u.FirstName,
+                u.LastName,
+                u.City,
+                u.State,
+                u.Country,
+                u.Created,
 
-    //             Posts = u.Posts!.Select(p => new
-    //             {
-    //                 p.PostId,
-    //                 p.Content,
-    //                 p.Posted,
-    //                 p.UserId_fk
-    //             }),
+                Posts = u.Posts!.Select(p => new
+                {
+                    p.PostId,
+                    p.Content,
+                    p.Posted,
+                    p.PhotoURL,
+                    p.UserId_fk,
+                }),
 
 
-    //         })
-    //             .ToList();
+            })
+                .ToList();
 
-    // }
+    }
     public User? GetUserById(int userId)
     {
         return _context!.Users!.SingleOrDefault(c => c.UserId == userId);

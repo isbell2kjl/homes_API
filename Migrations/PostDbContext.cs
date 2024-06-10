@@ -52,10 +52,12 @@ public class PostDbContext : DbContext
             entity.Property(c => c.Task);
             entity.Property(c => c.Text).IsRequired();
             entity.Property(c => c.ComDate);
-            entity.Property(c =>c.UsrId_fk);
             entity.HasOne(c => c.Post)
             .WithMany(p => p.Comments)
             .HasForeignKey(c => c.PostId_fk);
+            entity.HasOne(c => c.User)
+            .WithMany(u => u.Comments)
+            .HasForeignKey(c => c.UsrId_fk);
         });
 
         // modelBuilder.Entity<Post>().Navigation(e => e.User).AutoInclude();

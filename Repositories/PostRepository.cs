@@ -40,8 +40,10 @@ public class PostRepository : IPostRepository
                 p.PostId,
                 p.Content,
                 p.Posted,
+                p.PhotoURL,
                 p.UserId_fk,
-                p.User!.UserName
+                p.User!.UserName,
+                p.Comments
             })
                 .ToList();
     }
@@ -56,17 +58,52 @@ public class PostRepository : IPostRepository
                 p.PostId,
                 p.Content,
                 p.Posted,
+                p.PhotoURL,
                 p.UserId_fk,
-                p.User!.UserName
+                p.User!.UserName,
+                p.Comments
             })
             .Where(post => post.UserId_fk == userId)
                 .ToList();
     }
 
-    public Post? GetPostById(int postId)
+    public Post GetPostById(int postId)
     {
-        return _context.Posts!.SingleOrDefault(p => p.PostId == postId);
+        return _context.Posts!.FirstOrDefault(p => p.PostId == postId)!;
+        
+        // .Include(u => u.User)
+        // .Select(p => new
+        // {
+        
+        //     p.Content,
+        //     p.Posted,
+        //     p.UserId_fk,
+        //     p.User!.UserName,
+
+        // })
+
+        
+    // return _context.Posts!
+    //     .Include(p => p.Comments).
+    //         Select(p => new
+    //         {
+    //             p.PostId,
+    //             p.Content,
+    //             p.Posted,
+    //             p.UserId_fk,
+    //             p.Comments
+    //         })
+    //            .FirstOrDefault(p => p.PostId == postId);
+    
     }
+
+
+    // public IEnumerable<Post> GetPostById(int postId)
+    // {
+    //     return _context.Posts!.Include(p => p.Comments)
+    //                                .SingleOrDefault(p => p.PostId == postId);
+                                
+    // }
 
     public Post? UpdatePost(Post newPost)
     {
