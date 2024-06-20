@@ -7,6 +7,7 @@ public interface IPostRepository
     // IEnumerable<Post> GetAllPosts();
     IEnumerable<object> GetAllPosts();
     IEnumerable<object> GetUserPosts(int userId);
+    Task<IEnumerable<Post>> Search(string name);
 
     Post GetPostById(int postID);
 

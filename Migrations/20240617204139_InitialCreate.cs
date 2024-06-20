@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace blog_API.Migrations
+namespace homes_API.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -29,7 +29,7 @@ namespace blog_API.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LastName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "varchar(255)", nullable: true)
+                    Email = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     City = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -37,7 +37,10 @@ namespace blog_API.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Country = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ResetToken = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ResetTokenExpires = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,9 +56,12 @@ namespace blog_API.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    PhotoURL = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Content = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Posted = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Visible = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     UserId_fk = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -69,6 +75,48 @@ namespace blog_API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    ComId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Task = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Text = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ComDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    PostId_fk = table.Column<int>(type: "int", nullable: false),
+                    UsrId_fk = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.ComId);
+                    table.ForeignKey(
+                        name: "FK_Comments_Posts_PostId_fk",
+                        column: x => x.PostId_fk,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Users_UsrId_fk",
+                        column: x => x.UsrId_fk,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_PostId_fk",
+                table: "Comments",
+                column: "PostId_fk");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UsrId_fk",
+                table: "Comments",
+                column: "UsrId_fk");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId_fk",
@@ -91,6 +139,9 @@ namespace blog_API.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Comments");
+
             migrationBuilder.DropTable(
                 name: "Posts");
 

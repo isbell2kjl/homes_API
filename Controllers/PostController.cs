@@ -56,6 +56,29 @@ public class PostController : ControllerBase
         return Created(nameof(GetPostById), result);
     }
 
+    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
+    [HttpGet]
+    [Route("{searchposts}")]
+    public async Task<ActionResult<IEnumerable<Post>>> Search(string name)
+    {
+        try
+        {
+            var result = await (_postRepository.Search(name));
+
+            if (result.Any()) 
+            {
+                return Ok(result);
+            }    
+        }
+        catch (Exception)
+        {
+            return NotFound(); 
+        }
+        return StatusCode(StatusCodes.Status500InternalServerError,
+        "Error retrieving data from the database");
+
+    }
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPut]
     [Route("{postId:int}")]

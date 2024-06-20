@@ -41,6 +41,7 @@ public class PostDbContext : DbContext
             entity.Property(p => p.PhotoURL);
             entity.Property(p => p.Content).IsRequired();
             entity.Property(p => p.Posted);
+            entity.Property(p => p.Visible);
             entity.HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId_fk);

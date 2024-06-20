@@ -41,6 +41,8 @@ public class PostRepository : IPostRepository
                 p.Content,
                 p.Posted,
                 p.PhotoURL,
+                p.Title,
+                p.Visible,
                 p.UserId_fk,
                 p.User!.UserName,
                 p.Comments
@@ -59,6 +61,8 @@ public class PostRepository : IPostRepository
                 p.Content,
                 p.Posted,
                 p.PhotoURL,
+                p.Title,
+                p.Visible,
                 p.UserId_fk,
                 p.User!.UserName,
                 p.Comments
@@ -105,6 +109,19 @@ public class PostRepository : IPostRepository
                                 
     // }
 
+    public async Task<IEnumerable<Post>> Search(string name)
+    {
+        IQueryable<Post> query = _context.Posts!;
+
+        if (!string.IsNullOrEmpty(name))
+        {
+            query = query!.Where(p => p.Title!.Contains(name));
+        }
+
+        return await query.ToListAsync();
+
+    }
+
     public Post? UpdatePost(Post newPost)
     {
         var originalPost = _context.Posts!.Find(newPost.PostId);
@@ -113,6 +130,7 @@ public class PostRepository : IPostRepository
             originalPost.Title = newPost.Title;
             originalPost.Content = newPost.Content;
             originalPost.PhotoURL = newPost.PhotoURL;
+            originalPost.Visible = newPost.Visible;
             originalPost.Posted = DateTime.Now;
             _context.SaveChanges();
         }
