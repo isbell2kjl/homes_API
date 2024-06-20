@@ -7,7 +7,7 @@ using blog_API.Migrations;
 
 #nullable disable
 
-namespace blog_API.Migrations
+namespace homes_API.Migrations
 {
     [DbContext(typeof(PostDbContext))]
     partial class PostDbContextModelSnapshot : ModelSnapshot
@@ -16,7 +16,7 @@ namespace blog_API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.19")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("blog_API.Models.Comment", b =>
@@ -71,6 +71,9 @@ namespace blog_API.Migrations
 
                     b.Property<int>("UserId_fk")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("Visible")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("PostId");
 

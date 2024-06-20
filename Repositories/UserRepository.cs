@@ -60,6 +60,7 @@ public class UserRepository : IUserRepository
                     p.Content,
                     p.Posted,
                     p.PhotoURL,
+                    p.Visible,
                     p.UserId_fk,
                 }),
 
