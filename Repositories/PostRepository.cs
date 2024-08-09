@@ -43,12 +43,14 @@ public class PostRepository : IPostRepository
                 p.PhotoURL,
                 p.Title,
                 p.Visible,
+                p.Archive,
                 p.UserId_fk,
                 p.User!.UserName,
                 p.Comments
             })
                 .ToList();
     }
+
 
     //Return only the posts by a specific user based on the UserId_fk property of the Post model.
     public IEnumerable<object> GetUserPosts(int userId)
@@ -63,6 +65,7 @@ public class PostRepository : IPostRepository
                 p.PhotoURL,
                 p.Title,
                 p.Visible,
+                p.Archive,
                 p.UserId_fk,
                 p.User!.UserName,
                 p.Comments
@@ -75,39 +78,8 @@ public class PostRepository : IPostRepository
     {
         return _context.Posts!.FirstOrDefault(p => p.PostId == postId)!;
         
-        // .Include(u => u.User)
-        // .Select(p => new
-        // {
-        
-        //     p.Content,
-        //     p.Posted,
-        //     p.UserId_fk,
-        //     p.User!.UserName,
-
-        // })
-
-        
-    // return _context.Posts!
-    //     .Include(p => p.Comments).
-    //         Select(p => new
-    //         {
-    //             p.PostId,
-    //             p.Content,
-    //             p.Posted,
-    //             p.UserId_fk,
-    //             p.Comments
-    //         })
-    //            .FirstOrDefault(p => p.PostId == postId);
-    
     }
 
-
-    // public IEnumerable<Post> GetPostById(int postId)
-    // {
-    //     return _context.Posts!.Include(p => p.Comments)
-    //                                .SingleOrDefault(p => p.PostId == postId);
-                                
-    // }
 
     public async Task<IEnumerable<Post>> Search(string name)
     {
@@ -115,7 +87,8 @@ public class PostRepository : IPostRepository
 
         if (!string.IsNullOrEmpty(name))
         {
-            query = query!.Where(p => p.Title!.Contains(name));
+            query = query!.Where(p => p.Title!.Contains(name)
+                        || p.Content!.Contains(name));
         }
 
         return await query.ToListAsync();
@@ -131,6 +104,7 @@ public class PostRepository : IPostRepository
             originalPost.Content = newPost.Content;
             originalPost.PhotoURL = newPost.PhotoURL;
             originalPost.Visible = newPost.Visible;
+            originalPost.Archive = newPost.Archive;
             originalPost.Posted = DateTime.Now;
             _context.SaveChanges();
         }

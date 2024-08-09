@@ -42,6 +42,7 @@ public class PostDbContext : DbContext
             entity.Property(p => p.Content).IsRequired();
             entity.Property(p => p.Posted);
             entity.Property(p => p.Visible);
+            entity.Property(p => p.Archive);
             entity.HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId_fk);

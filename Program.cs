@@ -1,6 +1,7 @@
 using System.Text;
 using blog_API.Migrations;
 using blog_API.Repositories;
+using blog_API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -25,6 +26,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IForgotPasswordRepository,ForgotPasswordRepository>();
+builder.Services.AddScoped<IEmailRepository,EmailRepository>();
+builder.Services.AddScoped<IContactRepository,ContactRepository>();
+
+// configure strongly typed settings object
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 var secretKey = builder.Configuration["TokenSecret"];
 //convert string to byte
@@ -90,7 +97,7 @@ app.UseCors(builder => builder
     .AllowAnyHeader()
     .AllowAnyMethod());
     
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

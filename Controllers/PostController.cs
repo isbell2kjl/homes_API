@@ -25,6 +25,21 @@ public class PostController : ControllerBase
         return Ok(_postRepository.GetAllPosts());
     }
 
+    // [HttpGet]
+    // [Route("{visible}")]
+    // public ActionResult<IEnumerable<object>> GetVisible()
+    // {
+    //     return Ok(_postRepository.GetVisiblePosts());
+    // }
+
+    // [HttpGet]
+    // [Route("{active}")]
+    // public ActionResult<IEnumerable<object>> GetActive()
+    // {
+    //     return Ok(_postRepository.GetActivePosts());
+    // }
+
+
     [HttpGet]
     [Route("userPost/{userId:int}")]
     public ActionResult<IEnumerable<object>> GetUPosts(int userId)
