@@ -25,20 +25,6 @@ public class PostController : ControllerBase
         return Ok(_postRepository.GetAllPosts());
     }
 
-    // [HttpGet]
-    // [Route("{visible}")]
-    // public ActionResult<IEnumerable<object>> GetVisible()
-    // {
-    //     return Ok(_postRepository.GetVisiblePosts());
-    // }
-
-    // [HttpGet]
-    // [Route("{active}")]
-    // public ActionResult<IEnumerable<object>> GetActive()
-    // {
-    //     return Ok(_postRepository.GetActivePosts());
-    // }
-
 
     [HttpGet]
     [Route("userPost/{userId:int}")]
@@ -71,7 +57,6 @@ public class PostController : ControllerBase
         return Created(nameof(GetPostById), result);
     }
 
-    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     [HttpGet]
     [Route("{searchposts}")]
     public async Task<ActionResult<IEnumerable<Post>>> Search(string name)

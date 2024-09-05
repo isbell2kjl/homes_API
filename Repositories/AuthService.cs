@@ -1,10 +1,12 @@
 using blog_API.Migrations;
 using blog_API.Models;
+using blog_API.Helpers;
 using bcrypt = BCrypt.Net.BCrypt;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 
 
 namespace blog_API.Repositories;
@@ -14,28 +16,35 @@ public class AuthService : IAuthService
 {
     private static PostDbContext? _context;
     private static IConfiguration? _config;
+    private readonly IForgotPasswordRepository _forgotPasswordRepository;
+    private readonly IEmailRepository _emailRepository;
 
-    public AuthService(PostDbContext context, IConfiguration config)
+    public AuthService(PostDbContext context, IConfiguration config, IForgotPasswordRepository forgotPasswordRepository, 
+    IEmailRepository emailRepository)
     {
         _context = context;
         _config = config;
+        _emailRepository = emailRepository;
+        _forgotPasswordRepository = forgotPasswordRepository;
     }
 
 
-    public User SignUp(User user)
+    public User SignUp(User user) 
     {
         // TODO: Hash Password
-        var passwordHash = bcrypt.HashPassword(user.Password);
+        // var passwordHash = bcrypt.HashPassword(user.Password);
+        var passwordHash = bcrypt.HashPassword("TempPwd3@6");
         user.Password = passwordHash;
 
         _context!.Add(user);
         _context.SaveChanges();
         return user;
-    }
+    } 
 
     private string BuildToken(User user)
     {
         var secret = _config.GetValue<String>("TokenSecret");
+        var issuer = _config.GetValue<String>("Issuer");
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
         // Create Signature using secret signing key
@@ -50,15 +59,30 @@ public class AuthService : IAuthService
 
         // Create token
         var jwt = new JwtSecurityToken(
+            issuer: issuer,
+            audience: issuer,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(60),
+            expires: DateTime.Now.AddMinutes(1),
             signingCredentials: signingCredentials);
 
         // Encode token
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-
         return encodedJwt;
+    }
+
+     public string GenerateRefreshToken()
+    {
+         // token is a cryptographically strong random sequence of values
+        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+
+        // ensure token is unique by checking against db
+        var tokenIsUnique = !_context!.Users!.Any(x => x.RefreshToken == token);
+        if (!tokenIsUnique)
+            return GenerateRefreshToken();
+
+        return token;
+
     }
 
     //modified SignIn from tutorial:
@@ -81,8 +105,58 @@ public class AuthService : IAuthService
 
         // Create & return JWT
         var token = BuildToken(user)!;
+        var refreshToken = GenerateRefreshToken()!;
 
-        return new SignInResponse(user, token);
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpires = DateTime.Now.AddDays(7);
+
+        // save changes to db
+        _context.Users!.Update(user);
+        _context.SaveChanges();
+
+        return new SignInResponse(user, token, refreshToken);
+    }
+
+    private static User getUserByRefreshToken(string token)
+    {
+        var user = _context!.Users!.SingleOrDefault(x =>
+            x.RefreshToken == token && x.RefreshTokenExpires > DateTime.UtcNow);
+        if (user == null) throw new AppException("Invalid token");
+        return user;
+    }
+    public SignInResponse TokenRefresh(string token)
+    {
+
+        var user = getUserByRefreshToken(token);
+
+        if (user is null || user.RefreshTokenExpires <= DateTime.Now)
+            throw new AppException("Invalid client request");
+
+        var newAccessToken = BuildToken(user);
+        var newRefreshToken = GenerateRefreshToken();
+
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpires = DateTime.Now.AddDays(7);
+
+        // save changes to db
+        _context!.Users!.Update(user);
+        _context.SaveChanges();
+    
+        return new SignInResponse(user, newAccessToken, newRefreshToken);
+    }
+
+    public void TokenRevoke(string token)
+    {
+       var user = getUserByRefreshToken(token);
+
+       user.RefreshToken = null;
+       //DateTime fields cannot be set to null.  Not sure of workaround.
+        // user.RefreshTokenExpires = null;
+
+       // save changes to db
+        _context!.Users!.Update(user);
+        _context.SaveChanges();
+
     }
 
 }

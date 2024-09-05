@@ -23,6 +23,8 @@ public class User
     public DateTime? Created { get; set; } =  DateTime.Now;
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpires { get; set; }
 
 // [JsonIgnore]
     public List<Post>? Posts { get; set; }

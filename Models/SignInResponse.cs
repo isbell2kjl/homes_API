@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace blog_API.Models;
 
 
@@ -5,17 +7,16 @@ public class SignInResponse
 {
 
     public int Id { get; set; }
-    // public string? FirstName { get; set; }
-    // public string? LastName { get; set; }
     public string? UserName { get; set; }
     public string? Token { get; set; }
+    [JsonIgnore]
+    public string RefreshToken { get; set;}
 
-    public SignInResponse(User user, string token)
+    public SignInResponse(User user, string token, string refreshToken)
     {
         Id = user.UserId;
-        // FirstName = user.FirstName;
-        // LastName = user.LastName;
         UserName = user.UserName;
         Token = token;
+        RefreshToken = refreshToken;
     }
 }

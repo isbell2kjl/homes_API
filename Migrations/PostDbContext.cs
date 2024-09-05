@@ -80,6 +80,8 @@ public class PostDbContext : DbContext
             entity.Property(u => u.Created);
             entity.Property(u => u.ResetToken);
             entity.Property(u => u.ResetTokenExpires);
+            entity.Property(u => u.RefreshToken);
+            entity.Property(u => u.RefreshTokenExpires);
             
         });
     }
