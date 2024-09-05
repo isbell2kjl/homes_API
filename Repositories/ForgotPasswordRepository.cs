@@ -64,19 +64,19 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
             // origin exists if request sent from browser single page app (e.g. Angular or React)
             // so send link to verify via single page app
             var resetUrl = $"{origin}/reset-password?token={user.ResetToken}";
-            message = $@"<p>Please click the below link to reset your password, the link will be valid for 5 minutes:</p>
-                            <p><a href=""{resetUrl}"">Reset Password</a></p>";
+            message = $@"<p>Please click the below link to set your password, the link will be valid for 5 minutes:</p>
+                            <p><a href=""{resetUrl}"">Set Password</a></p>";
         }
         else
         {
-            message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
+            message = $@"<p>Please use the below token to set your password with the <code>/accounts/reset-password</code> api route:</p>
                             <p><code>{user.ResetToken}</code></p>";
         }
 
         _emailRepository.Send(
             to: user.Email,
-            subject: "Sign-up Verification API - Reset Password",
-            html: $@"<h4>Reset Password Email</h4>
+            subject: "Sign-up Verification API - Set Password",
+            html: $@"<h4>Set Password Email</h4>
                         {message}"
         );
     }

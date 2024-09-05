@@ -80,7 +80,7 @@ public class PostRepository : IPostRepository
         
     }
 
-
+    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     public async Task<IEnumerable<Post>> Search(string name)
     {
         IQueryable<Post> query = _context.Posts!;

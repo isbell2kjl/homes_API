@@ -13,18 +13,11 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserRepository _userRepository;
-    private readonly IForgotPasswordRepository _forgotPasswordRepository;
-    private readonly IEmailRepository _emailRepository;
 
-    public UserController(ILogger<UserController> logger,
-    IUserRepository repository,
-    IForgotPasswordRepository forgotPasswordRepository,
-    IEmailRepository emailRepository)
+    public UserController(ILogger<UserController> logger,IUserRepository repository)
     {
         _logger = logger;
         _userRepository = repository;
-         _forgotPasswordRepository = forgotPasswordRepository;
-         _emailRepository = emailRepository;
     }
 
     [HttpGet]
@@ -102,36 +95,6 @@ public class UserController : ControllerBase
         //     return Unauthorized("Not current user, can't edit");
         // }
     }
-
-    //Post route to request a token by email for password reset.
-    [HttpPost]
-    [Route("forgot-password")]
-    public IActionResult ForgotPassword(ForgotPasswordRequest model)
-    {
-        _forgotPasswordRepository.ForgotPassword(model, Request.Headers["origin"]!);
-        return Ok(new { message = "Please check your email for password reset instructions" });
-    }
-
-    //Post route to verify that provided token matches database and that 
-        //expired time is later than current time.
-    [HttpPost]
-    [Route("validate-reset-token")]
-    public IActionResult ValidateResetToken(ValidateResetTokenRequest model)
-    {
-        _forgotPasswordRepository.ValidateResetToken(model);
-        return Ok(new { message = "Token is valid" });
-    }
-
-    //Post route to enter token and new password for reset.
-    [HttpPost]
-    [Route("reset-password")]
-    public IActionResult ResetPassword(ResetPasswordRequest model)
-    {
-        _forgotPasswordRepository.ResetPassword(model);
-        return Ok(new { message = "Password reset successful, you can now login" });
-
-    }
-    
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpDelete]

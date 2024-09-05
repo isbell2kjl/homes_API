@@ -34,6 +34,8 @@ builder.Services.AddScoped<IContactRepository,ContactRepository>();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 var secretKey = builder.Configuration["TokenSecret"];
+var issuer = builder.Configuration["Issuer"];
+
 //convert string to byte
 byte[] bArray = Encoding.ASCII.GetBytes(secretKey);
 
@@ -52,10 +54,12 @@ builder.Services.AddAuthentication(options =>
     cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
     {
         IssuerSigningKey = new SymmetricSecurityKey(bArray),
-        ValidateAudience = false,
-        ValidateIssuer = false,
-        ValidateLifetime = false,
-        RequireExpirationTime = false,
+        ValidateAudience = true,
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+        ValidAudience = issuer,
+        ValidateLifetime = true,
+        RequireExpirationTime = true,
         ClockSkew = TimeSpan.Zero,
         ValidateIssuerSigningKey = true
     };
