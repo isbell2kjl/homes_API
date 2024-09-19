@@ -1,4 +1,4 @@
-namespace blog_API.Helpers;
+namespace homes_API.Helpers;
 
 public class AppSettings
 {

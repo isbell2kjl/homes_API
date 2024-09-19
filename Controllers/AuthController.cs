@@ -1,11 +1,11 @@
-using blog_API.Models;
-using blog_API.Repositories;
+using homes_API.Models;
+using homes_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
 
-namespace blog_API.Controllers;
+namespace homes_API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

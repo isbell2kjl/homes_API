@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace blog_API.Models;
+namespace homes_API.Models;
 
 
 public class SignInResponse

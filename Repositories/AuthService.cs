@@ -1,6 +1,6 @@
-using blog_API.Migrations;
-using blog_API.Models;
-using blog_API.Helpers;
+using homes_API.Migrations;
+using homes_API.Models;
+using homes_API.Helpers;
 using bcrypt = BCrypt.Net.BCrypt;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 
 public class AuthService : IAuthService

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using blog_API.Migrations;
+using homes_API.Migrations;
 
 #nullable disable
 
@@ -22,7 +22,7 @@ namespace homes_API.Migrations
                 .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("blog_API.Models.Comment", b =>
+            modelBuilder.Entity("homes_API.Models.Comment", b =>
                 {
                     b.Property<int>("ComId")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace homes_API.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("blog_API.Models.Post", b =>
+            modelBuilder.Entity("homes_API.Models.Post", b =>
                 {
                     b.Property<int>("PostId")
                         .ValueGeneratedOnAdd()
@@ -88,7 +88,7 @@ namespace homes_API.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("blog_API.Models.User", b =>
+            modelBuilder.Entity("homes_API.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -141,15 +141,15 @@ namespace homes_API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("blog_API.Models.Comment", b =>
+            modelBuilder.Entity("homes_API.Models.Comment", b =>
                 {
-                    b.HasOne("blog_API.Models.Post", "Post")
+                    b.HasOne("homes_API.Models.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId_fk")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("blog_API.Models.User", "User")
+                    b.HasOne("homes_API.Models.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UsrId_fk")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -160,9 +160,9 @@ namespace homes_API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("blog_API.Models.Post", b =>
+            modelBuilder.Entity("homes_API.Models.Post", b =>
                 {
-                    b.HasOne("blog_API.Models.User", "User")
+                    b.HasOne("homes_API.Models.User", "User")
                         .WithMany("Posts")
                         .HasForeignKey("UserId_fk")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -171,12 +171,12 @@ namespace homes_API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("blog_API.Models.Post", b =>
+            modelBuilder.Entity("homes_API.Models.Post", b =>
                 {
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("blog_API.Models.User", b =>
+            modelBuilder.Entity("homes_API.Models.User", b =>
                 {
                     b.Navigation("Comments");
 

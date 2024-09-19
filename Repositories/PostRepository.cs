@@ -1,8 +1,8 @@
-using blog_API.Migrations;
-using blog_API.Models;
+using homes_API.Migrations;
+using homes_API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public class PostRepository : IPostRepository
 {

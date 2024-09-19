@@ -1,8 +1,8 @@
-using blog_API.Models;
+using homes_API.Models;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace blog_API.Migrations;
+namespace homes_API.Migrations;
 
 public class PostDbContext : DbContext
 {
