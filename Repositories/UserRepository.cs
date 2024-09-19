@@ -62,10 +62,11 @@ public class UserRepository : IUserRepository
                 .ToList();
 
     }
-    public User? GetUserById(int userId)
+    public User GetUserById(int userId)
     {
-        return _context!.Users!.SingleOrDefault(c => c.UserId == userId);
+        return _context!.Users!.SingleOrDefault(c => c.UserId == userId)!;
     }
+
 
 //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     public async Task<IEnumerable<User>> Search(string name)

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using blog_API.Models;
 using blog_API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +15,7 @@ public class UserController : ControllerBase
     private readonly ILogger<UserController> _logger;
     private readonly IUserRepository _userRepository;
 
-    public UserController(ILogger<UserController> logger,IUserRepository repository)
+    public UserController(ILogger<UserController> logger, IUserRepository repository)
     {
         _logger = logger;
         _userRepository = repository;
@@ -26,7 +27,7 @@ public class UserController : ControllerBase
         return Ok(_userRepository.GetAllUsers());
     }
 
-//search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
+    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     [HttpGet]
     [Route("{search}")]
     public async Task<ActionResult<IEnumerable<User>>> Search(string name)
@@ -35,14 +36,14 @@ public class UserController : ControllerBase
         {
             var result = await (_userRepository.Search(name));
 
-            if (result.Any()) 
+            if (result.Any())
             {
                 return Ok(result);
-            }    
+            }
         }
         catch (Exception)
         {
-            return NotFound(); 
+            return NotFound();
         }
         return StatusCode(StatusCodes.Status500InternalServerError,
         "Error retrieving data from the database");
@@ -62,6 +63,35 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    // GET / get current user
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet]
+    [Route("current")]
+
+    public ActionResult<User> GetCurrentUser()
+    {
+
+        if (HttpContext.User == null)
+        {
+            return Unauthorized();
+        }
+
+        var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId");
+
+        
+        var userId = Int32.Parse(userIdClaim!.Value);
+
+        var user = _userRepository.GetUserById(userId);
+        
+
+        return Ok(user);
+
+        // int id = Convert.ToInt32(HttpContext.User.FindFirstValue("UserId"));
+
+
+        // return Ok(new {UserId = id});
+    }
+    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPut]
     [Route("{userId:int}")]
@@ -73,9 +103,9 @@ public class UserController : ControllerBase
             return Unauthorized("Unable to find user, returns null");
         }
         // // Make sure no one can edit another user's profile.
-        // var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId")!;
+        var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId")!;
 
-        // var claimId = Int32.Parse(userIdClaim.Value);
+        var claimId = Int32.Parse(userIdClaim.Value);
 
         if (!ModelState.IsValid || editUser == null)
         {
@@ -85,15 +115,15 @@ public class UserController : ControllerBase
         {
             return Unauthorized("Unable to find user, returns null");
         }
-        // if (claimId == userId)
-        // {
+        if (claimId == userId)
+        {
         _userRepository.UpdateUser(userId, editUser);
         return Ok(new { message = "User updated" });
-        // }
-        // else
-        // {
-        //     return Unauthorized("Not current user, can't edit");
-        // }
+        }
+        else
+        {
+            return Unauthorized("Not current user, can't edit");
+        }
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

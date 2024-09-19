@@ -1,6 +1,8 @@
- using blog_API.Models;
+using blog_API.Models;
 using blog_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace blog_API.Controllers;
@@ -19,8 +21,8 @@ public class AuthController : ControllerBase
     {
         _logger = logger;
         _authService = service;
-         _forgotPasswordRepository = forgotPasswordRepository;
-         _emailRepository = emailRepository;
+        _forgotPasswordRepository = forgotPasswordRepository;
+        _emailRepository = emailRepository;
     }
 
     [HttpPost]
@@ -41,30 +43,32 @@ public class AuthController : ControllerBase
         var response = _authService.SignIn(request);
         setTokenCookie(response.RefreshToken);
 
-         if (response == null)
+        if (response == null)
             return BadRequest(new { message = "Username or password is incorrect" });
-        
+
         return Ok(response);
 
     }
 
     [HttpPost("refresh-token")]
-    public ActionResult<SignInResponse> RefreshToken()
+    public IActionResult RefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
         var response = _authService.TokenRefresh(refreshToken);
 
+        if (string.IsNullOrEmpty(refreshToken))
+            return BadRequest(new { message = "Token is required" });
+
         setTokenCookie(response.RefreshToken);
-        
         return Ok(response);
     }
 
-
-[HttpPost("revoke-token")]
-    public IActionResult RevokeToken(RevokeTokenRequest model)
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("revoke-token")]
+    public IActionResult RevokeToken()
     {
-        // accept token from request body or cookie
-        var token = model.Token ?? Request.Cookies["refreshToken"];
+    //    // accept refresh token in request body or cookie
+        var token = Request.Cookies["refreshToken"];
 
         if (string.IsNullOrEmpty(token))
             return BadRequest(new { message = "Token is required" });
@@ -73,7 +77,8 @@ public class AuthController : ControllerBase
         _authService.TokenRevoke(token);
         return Ok(new { message = "Token revoked" });
     }
-     //Post route to request a token by email for password reset.
+
+    //Post route to request a token by email for password reset.
     [HttpPost]
     [Route("forgot-password")]
     public IActionResult ForgotPassword(ForgotPasswordRequest model)
@@ -83,7 +88,7 @@ public class AuthController : ControllerBase
     }
 
     //Post route to verify that provided token matches database and that 
-        //expired time is later than current time.
+    //expired time is later than current time.
     [HttpPost]
     [Route("validate-reset-token")]
     public IActionResult ValidateResetToken(ValidateResetTokenRequest model)
@@ -109,10 +114,12 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
+            SameSite = SameSiteMode.None,
+            Secure = true,
             Expires = DateTime.UtcNow.AddDays(7)
         };
         Response.Cookies.Append("refreshToken", token, cookieOptions);
     }
-    
+
 }
 
