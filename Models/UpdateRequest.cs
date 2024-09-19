@@ -1,4 +1,4 @@
-namespace blog_API.Models;
+namespace homes_API.Models;
 
 
 using System.ComponentModel.DataAnnotations;

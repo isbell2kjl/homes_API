@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace blog_API.Models;
+namespace homes_API.Models;
 
 public class ValidateResetTokenRequest
 {

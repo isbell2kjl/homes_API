@@ -3,9 +3,9 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
-using blog_API.Helpers;
+using homes_API.Helpers;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 
 public class EmailRepository : IEmailRepository

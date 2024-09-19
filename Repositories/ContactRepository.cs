@@ -1,7 +1,7 @@
-using blog_API.Models;
-using blog_API.Helpers;
+using homes_API.Models;
+using homes_API.Helpers;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public class ContactRepository : IContactRepository
 {

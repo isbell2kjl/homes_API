@@ -1,10 +1,10 @@
-using blog_API.Models;
-using blog_API.Migrations;
-using blog_API.Helpers;
+using homes_API.Models;
+using homes_API.Migrations;
+using homes_API.Helpers;
 using System.Security.Cryptography;
 using bcrypt = BCrypt.Net.BCrypt;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public class ForgotPasswordRepository : IForgotPasswordRepository
 {

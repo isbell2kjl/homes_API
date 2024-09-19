@@ -1,6 +1,6 @@
-using blog_API.Models;
+using homes_API.Models;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public interface IForgotPasswordRepository
 {
