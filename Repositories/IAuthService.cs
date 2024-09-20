@@ -1,10 +1,16 @@
-using blog_API.Models;
+using homes_API.Models;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public interface IAuthService
 {
+    
+    //ideas from https://jasonwatmore.com/ and https://code-maze.com/
+
     User SignUp(User user);
-    //https://jasonwatmore.com/post/2021/12/14/net-6-jwt-authentication-tutorial-with-example-api#user-cs
     SignInResponse SignIn(SignInRequest request);
+    string GenerateRefreshToken();
+    SignInResponse TokenRefresh(string token);
+    void TokenRevoke(string token);
+    
 }

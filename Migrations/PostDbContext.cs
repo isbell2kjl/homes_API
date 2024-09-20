@@ -1,8 +1,8 @@
-using blog_API.Models;
+using homes_API.Models;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace blog_API.Migrations;
+namespace homes_API.Migrations;
 
 public class PostDbContext : DbContext
 {
@@ -80,6 +80,8 @@ public class PostDbContext : DbContext
             entity.Property(u => u.Created);
             entity.Property(u => u.ResetToken);
             entity.Property(u => u.ResetTokenExpires);
+            entity.Property(u => u.RefreshToken);
+            entity.Property(u => u.RefreshTokenExpires);
             
         });
     }

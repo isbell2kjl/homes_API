@@ -1,10 +1,10 @@
-using blog_API.Models;
-using blog_API.Repositories;
+using homes_API.Models;
+using homes_API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace blog_API.Controllers;
+namespace homes_API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -24,20 +24,6 @@ public class PostController : ControllerBase
     {
         return Ok(_postRepository.GetAllPosts());
     }
-
-    // [HttpGet]
-    // [Route("{visible}")]
-    // public ActionResult<IEnumerable<object>> GetVisible()
-    // {
-    //     return Ok(_postRepository.GetVisiblePosts());
-    // }
-
-    // [HttpGet]
-    // [Route("{active}")]
-    // public ActionResult<IEnumerable<object>> GetActive()
-    // {
-    //     return Ok(_postRepository.GetActivePosts());
-    // }
 
 
     [HttpGet]
@@ -71,7 +57,6 @@ public class PostController : ControllerBase
         return Created(nameof(GetPostById), result);
     }
 
-    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     [HttpGet]
     [Route("{searchposts}")]
     public async Task<ActionResult<IEnumerable<Post>>> Search(string name)

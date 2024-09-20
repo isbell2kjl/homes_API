@@ -1,7 +1,7 @@
 using System.Text;
-using blog_API.Migrations;
-using blog_API.Repositories;
-using blog_API.Helpers;
+using homes_API.Migrations;
+using homes_API.Repositories;
+using homes_API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -21,7 +21,7 @@ builder.Services.AddDbContext<PostDbContext>();
  
 // builder.Services.AddMySqlDataSource(builder.Configuration.GetConnectionString("Default")!);
 
-// builder.Services.AddSqlite<PostDbContext>("Data Source=blog_API.db");
+// builder.Services.AddSqlite<PostDbContext>("Data Source=homes_API.db");
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
@@ -34,6 +34,8 @@ builder.Services.AddScoped<IContactRepository,ContactRepository>();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 var secretKey = builder.Configuration["TokenSecret"];
+var issuer = builder.Configuration["Issuer"];
+
 //convert string to byte
 byte[] bArray = Encoding.ASCII.GetBytes(secretKey);
 
@@ -52,17 +54,19 @@ builder.Services.AddAuthentication(options =>
     cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
     {
         IssuerSigningKey = new SymmetricSecurityKey(bArray),
-        ValidateAudience = false,
-        ValidateIssuer = false,
-        ValidateLifetime = false,
-        RequireExpirationTime = false,
+        ValidateAudience = true,
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+        ValidAudience = issuer,
+        ValidateLifetime = true,
+        RequireExpirationTime = true,
         ClockSkew = TimeSpan.Zero,
         ValidateIssuerSigningKey = true
     };
 }
 );
 builder.Services.AddSwaggerGen(c => {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "blog_API_tokens", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "homes_API_tokens", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         In = ParameterLocation.Header, 
         Description = "Please insert JWT with Bearer into field",
@@ -95,10 +99,12 @@ if (app.Environment.IsDevelopment())
 app.UseCors(builder => builder
     .WithOrigins("http://localhost:8100","http://localhost:4200", "http://localhost:3000")
     .AllowAnyHeader()
-    .AllowAnyMethod());
+    .AllowAnyMethod()
+    .AllowCredentials());
     
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

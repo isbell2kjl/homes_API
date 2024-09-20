@@ -1,9 +1,8 @@
-using blog_API.Migrations;
-using blog_API.Models;
-using bcrypt = BCrypt.Net.BCrypt;
+using homes_API.Migrations;
+using homes_API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public class UserRepository : IUserRepository
 {
@@ -24,12 +23,6 @@ public class UserRepository : IUserRepository
         }
     }
 
-    // public IEnumerable<User> GetAllUsers()
-    // {
-
-    //     return _context.Users!.ToList();
-
-    // }
 
     //To avoid circular reference, combination of ideas from these websites:
     //https://khalidabuhakmeh.com/ef-core-and-aspnet-core-cycle-issue-and-solution
@@ -69,11 +62,13 @@ public class UserRepository : IUserRepository
                 .ToList();
 
     }
-    public User? GetUserById(int userId)
+    public User GetUserById(int userId)
     {
-        return _context!.Users!.SingleOrDefault(c => c.UserId == userId);
+        return _context!.Users!.SingleOrDefault(c => c.UserId == userId)!;
     }
 
+
+//search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     public async Task<IEnumerable<User>> Search(string name)
     {
         IQueryable<User> query = _context.Users!;
@@ -92,16 +87,7 @@ public class UserRepository : IUserRepository
     {
         var originalUser = GetUserById(userId)!;
 
-        //not working right.  To change password in Postman, temporarily enable the following:
-        //  However this won't work on the frontend.
-
-        // hash password if it was entered
-        // if (!string.IsNullOrEmpty(editUser.Password))
-        // {
-        //     originalUser.Password = bcrypt.HashPassword(editUser.Password);
-        // }
-
-        // copy model to user and save
+        //password can only be updated via the ForgotPassword route.
 
         originalUser.UserName = editUser.UserName;
         originalUser.Email = editUser.Email;

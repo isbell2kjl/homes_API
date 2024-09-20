@@ -1,8 +1,8 @@
-using blog_API.Migrations;
-using blog_API.Models;
+using homes_API.Migrations;
+using homes_API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public class PostRepository : IPostRepository
 {
@@ -80,7 +80,7 @@ public class PostRepository : IPostRepository
         
     }
 
-
+    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     public async Task<IEnumerable<Post>> Search(string name)
     {
         IQueryable<Post> query = _context.Posts!;

@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/blog_API.csproj",
+                "${workspaceFolder}/homes_API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/blog_API.csproj",
+                "${workspaceFolder}/homes_API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/blog_API.csproj"
+                "${workspaceFolder}/homes_API.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

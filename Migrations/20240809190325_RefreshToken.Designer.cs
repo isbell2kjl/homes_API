@@ -11,8 +11,8 @@ using homes_API.Migrations;
 namespace homes_API.Migrations
 {
     [DbContext(typeof(PostDbContext))]
-    [Migration("20240617204139_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240809190325_RefreshToken")]
+    partial class RefreshToken
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,6 +59,9 @@ namespace homes_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<sbyte?>("Archive")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -75,8 +78,8 @@ namespace homes_API.Migrations
                     b.Property<int>("UserId_fk")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("Visible")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<sbyte?>("Visible")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("PostId");
 
@@ -113,6 +116,12 @@ namespace homes_API.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("RefreshTokenExpires")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("ResetToken")
                         .HasColumnType("longtext");

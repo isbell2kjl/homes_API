@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace blog_API.Models;
+namespace homes_API.Models;
 
 public class User
 {
@@ -23,6 +23,8 @@ public class User
     public DateTime? Created { get; set; } =  DateTime.Now;
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpires { get; set; } = DateTime.Now;
 
 // [JsonIgnore]
     public List<Post>? Posts { get; set; }

@@ -1,6 +1,6 @@
-using blog_API.Models;
+using homes_API.Models;
 
-namespace blog_API.Repositories;
+namespace homes_API.Repositories;
 
 public interface IUserRepository
 {
@@ -8,7 +8,7 @@ public interface IUserRepository
     // IEnumerable<User> GetAllUsers();
     IEnumerable<object> GetAllUsers();
     Task<IEnumerable<User>> Search(string name);
-    User? GetUserById(int userId);
+    User GetUserById(int userId);
     void UpdateUser(int userId, UpdateRequest editUser);
     void DeleteUserById(int userId);
 
