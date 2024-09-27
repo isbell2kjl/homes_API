@@ -108,4 +108,5 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
         _context!.Users!.Update(user);
         _context.SaveChanges();
     }
+
 }

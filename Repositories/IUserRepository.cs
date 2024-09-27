@@ -8,6 +8,8 @@ public interface IUserRepository
     // IEnumerable<User> GetAllUsers();
     IEnumerable<object> GetAllUsers();
     Task<IEnumerable<User>> Search(string name);
+    Task<bool> UserNameExists(string username);
+    Task<bool> EmailExists(string email);
     User GetUserById(int userId);
     void UpdateUser(int userId, UpdateRequest editUser);
     void DeleteUserById(int userId);

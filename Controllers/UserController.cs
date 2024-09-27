@@ -50,6 +50,28 @@ public class UserController : ControllerBase
 
     }
 
+    [HttpGet]
+    [Route("check-username")]
+    public async Task<IActionResult> CheckUserName(string username)
+        {
+            if (await _userRepository.UserNameExists(username))
+            {
+            return BadRequest("Username is already taken.");
+            }
+            return Ok();
+        }
+
+    [HttpGet]
+    [Route("check-email")]
+    public async Task<IActionResult> CheckEmail(string email)
+        {
+            if (await _userRepository.EmailExists(email))
+            {
+            return BadRequest("Email is already in use.");
+            }
+            return Ok();
+        }
+        
 
     [HttpGet]
     [Route("{userId:int}")]

@@ -135,13 +135,14 @@ public class AuthService : IAuthService
             throw new AppException("Invalid client request");
 
         var newAccessToken = BuildToken(user);
-
+        var newRefreshToken = GenerateRefreshToken()!;
+        user.RefreshToken = newRefreshToken;
 
         // save changes to db
         _context!.Users!.Update(user);
         _context.SaveChanges();
 
-        return new SignInResponse(user, newAccessToken, token);
+        return new SignInResponse(user, newAccessToken, newRefreshToken);
     }
 
     public void TokenRevoke(string token)

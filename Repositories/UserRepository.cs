@@ -83,6 +83,20 @@ public class UserRepository : IUserRepository
 
     }
 
+    public async Task<bool> UserNameExists(string username)
+    { 
+        
+         return await _context!.Users!.AnyAsync(u => u.UserName == username)!;
+
+    }
+
+    public async Task<bool> EmailExists(string email)
+    { 
+        
+         return await _context!.Users!.AnyAsync(u => u.Email == email)!;
+
+    }
+
     public void UpdateUser(int userId, UpdateRequest editUser)
     {
         var originalUser = GetUserById(userId)!;
