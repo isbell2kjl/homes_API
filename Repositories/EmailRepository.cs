@@ -16,7 +16,7 @@ public class EmailRepository : IEmailRepository
     {
         _appSettings = appSettings.Value;
     }
-    public void Send(string to, string subject, string html, string from = null )
+    public void Send(string to, string subject, string html, string from = "" )
     {
         // create message
         var email = new MimeMessage();

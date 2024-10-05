@@ -29,6 +29,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IForgotPasswordRepository,ForgotPasswordRepository>();
 builder.Services.AddScoped<IEmailRepository,EmailRepository>();
 builder.Services.AddScoped<IContactRepository,ContactRepository>();
+builder.Services.AddScoped<IWebMasterRepository,WebMasterRepository>();
 
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));

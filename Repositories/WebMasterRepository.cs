@@ -3,19 +3,19 @@ using homes_API.Helpers;
 
 namespace homes_API.Repositories;
 
-public class ContactRepository : IContactRepository
+public class WebMasterRepository : IWebMasterRepository
 {
 
     private readonly IEmailRepository _emailRepository;
     private static IConfiguration? _config;
 
-    public ContactRepository(IEmailRepository emailRepository, IConfiguration config)
+    public WebMasterRepository(IEmailRepository emailRepository, IConfiguration config)
     {
         _emailRepository = emailRepository;
         _config = config;
     }
 
-    public void SendContact(Contact model, string origin)
+    public void SendWebMaster(Contact model, string origin)
     {
         var user = model;
 
@@ -25,7 +25,7 @@ public class ContactRepository : IContactRepository
 
     private void sendContactEmail(Contact user, string origin)
     {
-        var host = _config.GetValue<String>("WebHost");
+        var webmaster = _config.GetValue<String>("WebMaster");
         string message;
         if (!string.IsNullOrEmpty(origin))
 
@@ -43,8 +43,8 @@ public class ContactRepository : IContactRepository
         }
 
         _emailRepository.Send(
-            to: host,
-            subject: "Contact Request",
+            to: webmaster,
+            subject: "WebSite Request",
             html: $@"<h4>This message is from:</h4>
                         {message}"
         );
