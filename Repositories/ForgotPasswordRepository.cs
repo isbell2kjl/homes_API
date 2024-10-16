@@ -2,7 +2,7 @@ using homes_API.Models;
 using homes_API.Migrations;
 using homes_API.Helpers;
 using System.Security.Cryptography;
-using bcrypt = BCrypt.Net.BCrypt;
+using Bcrypt = BCrypt.Net.BCrypt;
 
 namespace homes_API.Repositories;
 
@@ -100,7 +100,7 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
         var user = getAccountByResetToken(model!.Token!);
 
         // update password and remove reset token
-        user.Password = bcrypt.HashPassword(model.Password);
+        user.Password = Bcrypt.HashPassword(model.Password);
         user.ResetToken = null;
         user.ResetTokenExpires = null;
 

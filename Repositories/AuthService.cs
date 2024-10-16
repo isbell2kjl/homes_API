@@ -1,7 +1,7 @@
 using homes_API.Migrations;
 using homes_API.Models;
 using homes_API.Helpers;
-using bcrypt = BCrypt.Net.BCrypt;
+using Bcrypt = BCrypt.Net.BCrypt;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -33,7 +33,7 @@ public class AuthService : IAuthService
     {
         // TODO: Hash Password
         // user.Password = "n:ryKT6(<b56";
-        var passwordHash = bcrypt.HashPassword(user.Password);
+        var passwordHash = Bcrypt.HashPassword(user.Password);
         user.Password = passwordHash;
 
         _context!.Add(user);
@@ -97,7 +97,7 @@ public class AuthService : IAuthService
 
         if (user != null)
         {
-            verified = bcrypt.Verify(request.Password, user.Password);
+            verified = Bcrypt.Verify(request.Password, user.Password);
         }
 
         if (user == null || !verified)
