@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace homes_API.Models; 
 
 public class Contact{

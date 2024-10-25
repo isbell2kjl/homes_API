@@ -1,6 +1,6 @@
 {
   "ConnectionStrings": {
-    "Default": "server=localhost; database=; user=; password="
+    "Default": "server=localhost; database= ; user=; password="
   },
   "AppSettings": {
     "Secret": "",

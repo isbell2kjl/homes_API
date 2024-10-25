@@ -6,14 +6,10 @@ namespace homes_API.Migrations;
 
 public class PostDbContext : DbContext
 {
-    public DbSet<Post>? Posts { get; set; }
+    public DbSet<Project>? Project { get; set; }
     public DbSet<User>? Users { get; set; }
-    public DbSet<Comment>? Comments {get; set;}
-
-    // public PostDbContext(DbContextOptions<PostDbContext> options)
-    //     : base(options)
-    // {
-    // }
+    public DbSet<Post>? Posts { get; set; }
+    public DbSet<Comment>? Comments { get; set; }
 
     protected readonly IConfiguration Configuration;
 
@@ -22,7 +18,6 @@ public class PostDbContext : DbContext
         Configuration = configuration;
     }
 
-    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // connect to mysql with connection string from app settings
@@ -30,9 +25,54 @@ public class PostDbContext : DbContext
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Project>(entity =>
+       {
+           entity.HasKey(c => c.ProjectId);
+           entity.Property(c => c.MainTitle);
+           entity.Property(c => c.MainText);
+           entity.Property(c => c.Tagline);
+           entity.Property(c => c.LeftTitle);
+           entity.Property(c => c.LeftText);
+           entity.Property(c => c.CenterTitle);
+           entity.Property(c => c.CenterText);
+           entity.Property(c => c.RightTitle);
+           entity.Property(c => c.RightText);
+           entity.Property(c => c.ContactText);
+           entity.Property(c => c.ContactEmail);
+           entity.Property(c => c.ContactPhone);
+       });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(u => u.UserId);
+            entity.Property(u => u.UserName).IsRequired();
+            entity.HasIndex(x => x.UserName).IsUnique();
+            entity.Property(u => u.Password).IsRequired();
+            entity.Property(u => u.Email).IsRequired();
+            entity.HasIndex(x => x.Email).IsUnique();
+            entity.Property(u => u.FirstName);
+            entity.Property(u => u.LastName);
+            entity.Property(u => u.City);
+            entity.Property(u => u.State);
+            entity.Property(u => u.Country);
+            entity.Property(u => u.Created);
+            entity.Property(u => u.ResetToken);
+            entity.Property(u => u.ResetTokenExpires);
+            entity.Property(u => u.RefreshToken);
+            entity.Property(u => u.RefreshTokenExpires);
+            entity.Property(u => u.Terms);
+            entity.Property(u => u.Privacy);
+            entity.HasOne(p => p.Project)
+            .WithMany(u => u.Users)
+            .HasForeignKey(p => p.ProjId_fk);
+
+        });
 
         modelBuilder.Entity<Post>(entity =>
         {
@@ -62,28 +102,7 @@ public class PostDbContext : DbContext
             .HasForeignKey(c => c.UsrId_fk);
         });
 
-        // modelBuilder.Entity<Post>().Navigation(e => e.User).AutoInclude();
-
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(u => u.UserId);
-            entity.Property(u => u.UserName).IsRequired();
-            entity.HasIndex(x => x.UserName).IsUnique();
-            entity.Property(u => u.Password).IsRequired();
-            entity.Property(u => u.Email).IsRequired();
-            entity.HasIndex(x => x.Email).IsUnique();
-            entity.Property(u => u.FirstName);
-            entity.Property(u => u.LastName);
-            entity.Property(u => u.City);
-            entity.Property(u => u.State);
-            entity.Property(u => u.Country);
-            entity.Property(u => u.Created);
-            entity.Property(u => u.ResetToken);
-            entity.Property(u => u.ResetTokenExpires);
-            entity.Property(u => u.RefreshToken);
-            entity.Property(u => u.RefreshTokenExpires);
-            
-        });
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }
 
