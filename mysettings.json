@@ -1,11 +1,11 @@
 {
   "ConnectionStrings": {
-    "Default": "server=localhost; database= ; user=; password="
+    "Default": ""
   },
   "AppSettings": {
     "Secret": "",
     "EmailFrom": "",
-    "SmtpUser": "",
+    "SmtpUser": "", 
     "SmtpPass": ""
  
   },

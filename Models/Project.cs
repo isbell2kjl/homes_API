@@ -6,6 +6,8 @@ public class Project
 {
     [Required]
     public int ProjectId { get; set; }
+    public string? ProjectName { get; set;}
+    public string? Description { get; set;}
     public string? MainTitle { get; set; }
     public string? MainText { get; set; }
     public string? Tagline { get; set; }
@@ -18,8 +20,6 @@ public class Project
     public string? ContactText { get; set; }
     public string? ContactEmail{ get; set; }
     public string? ContactPhone { get; set; }
-    public string? SmtpHost { get; set; }
-    public string? SmtpPwd { get; set; }
     public List<User>? Users { get; set; }
 
 

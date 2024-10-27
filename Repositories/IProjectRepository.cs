@@ -4,7 +4,10 @@ namespace homes_API.Repositories;
 
 public interface IProjectRepository
 {
-Task<Project> GetPojectAsync(int ProjectId);
+
+Project CreateProject(Project newProject);
+Project GetProjectById(int projectId);
+Task<Project> GetPojectAsync(int projectId);
 Task UpdateProjectAsync(Project project);
    
 }

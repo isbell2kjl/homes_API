@@ -6,7 +6,7 @@ namespace homes_API.Migrations;
 
 public class PostDbContext : DbContext
 {
-    public DbSet<Project>? Project { get; set; }
+    public DbSet<Project>? Projects { get; set; }
     public DbSet<User>? Users { get; set; }
     public DbSet<Post>? Posts { get; set; }
     public DbSet<Comment>? Comments { get; set; }
@@ -34,7 +34,9 @@ public class PostDbContext : DbContext
         modelBuilder.Entity<Project>(entity =>
        {
            entity.HasKey(c => c.ProjectId);
-           entity.Property(c => c.MainTitle);
+           entity.Property (c => c.ProjectName).IsRequired();
+           entity.Property (c => c.Description);
+           entity.Property(c => c.MainTitle); 
            entity.Property(c => c.MainText);
            entity.Property(c => c.Tagline);
            entity.Property(c => c.LeftTitle);

@@ -1,5 +1,7 @@
 using homes_API.Models;
 using homes_API.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -26,6 +28,31 @@ public class ProjectController : ControllerBase
         return Ok(content);
     }
 
+    [HttpPost]
+    public ActionResult<Project> CreateProject(Project project)
+    {
+        if (!ModelState.IsValid || project == null)
+        {
+            return BadRequest();
+        }
+        var result = _projectRepository.CreateProject(project);
+        return Created(nameof(GetProjectById), result);
+    }
+
+    [HttpGet]
+    [Route("{projectId:int}")]
+    public ActionResult<Post> GetProjectById(int projectId)
+    {
+        var project = _projectRepository.GetProjectById(projectId);
+        if (project == null)
+        {
+            return NotFound();
+        }
+        return Ok(project);
+    }
+     
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPut("projectId")]
     public async Task<IActionResult> UpdateProjectContent(int projectId, [FromBody] Project updatedProject)
     {
