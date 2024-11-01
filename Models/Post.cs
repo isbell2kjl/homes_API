@@ -4,8 +4,9 @@ namespace homes_API.Models;
 
 public class Post
 {
-    [Required]
+    
     public int PostId { get; set; }
+    [Required]
     public string? Title { get; set; }
     public string? PhotoURL { get; set; }
     [Required]

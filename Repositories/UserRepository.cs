@@ -46,6 +46,7 @@ public class UserRepository : IUserRepository
                 u.State,
                 u.Country,
                 u.Created,
+                u.ProjId_fk,
 
                 Posts = u.Posts!.Select(p => new
                 {

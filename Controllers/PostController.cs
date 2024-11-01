@@ -27,10 +27,10 @@ public class PostController : ControllerBase
 
 
     [HttpGet]
-    [Route("userPost/{userId:int}")]
-    public ActionResult<IEnumerable<object>> GetUPosts(int userId)
+    [Route("projectposts/{projectId:int}")]
+    public ActionResult<IEnumerable<object>> GetProjectPosts(int projectId)
     {
-        return Ok(_postRepository.GetUserPosts(userId));
+        return Ok(_postRepository.GetProjectPosts(projectId));
     }
 
     [HttpGet]
@@ -63,7 +63,7 @@ public class PostController : ControllerBase
     {
         try
         {
-            var result = await (_postRepository.Search(name));
+            var result = await _postRepository.Search(name);
 
             if (result.Any()) 
             {

@@ -17,15 +17,28 @@ public class ProjectController : ControllerBase
         _projectRepository = repository;
     }
 
-    [HttpGet("{projectId}")]
-    public async Task<IActionResult> GetProjectContent(int projectId)
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet]
+    [Route("{projectId:int}")]
+    public ActionResult<Project> GetProjectById(int projectId)
     {
-        var content = await _projectRepository.GetPojectAsync(projectId)!;
-        if(content == null)
+        var project = _projectRepository.GetProjectById(projectId);
+        if (project == null)
         {
             return NotFound();
         }
-        return Ok(content);
+        return Ok(project);
+    }
+
+    [HttpGet]
+    public ActionResult<Project> GetProjectFirstRow()
+    {
+        var project = _projectRepository.GetProjectFirstRow();
+        if (project == null)
+        {
+            return NotFound();
+        }
+        return Ok(project);
     }
 
     [HttpPost]
@@ -39,34 +52,25 @@ public class ProjectController : ControllerBase
         return Created(nameof(GetProjectById), result);
     }
 
-    [HttpGet]
+     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPut]
     [Route("{projectId:int}")]
-    public ActionResult<Post> GetProjectById(int projectId)
+    public ActionResult<Project> UpdatePost(Project project)
     {
-        var project = _projectRepository.GetProjectById(projectId);
-        if (project == null)
+        if (!ModelState.IsValid || project == null)
         {
-            return NotFound();
+            return BadRequest();
         }
-        return Ok(project);
+        return Ok(_projectRepository.UpdateProject(project));
     }
-     
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPut("projectId")]
-    public async Task<IActionResult> UpdateProjectContent(int projectId, [FromBody] Project updatedProject)
+    [HttpDelete]
+    [Route("{projectId:int}")]
+    public ActionResult DeleteProject(int projectId)
     {
-        if (projectId != updatedProject.ProjectId)
-        {
-            return BadRequest("Project ID mismatch");
-        }
-        var existingContent = await _projectRepository.GetPojectAsync(projectId)!;
-        if (existingContent == null)
-        {
-            return NotFound();
-        }
-
-        await _projectRepository.UpdateProjectAsync(updatedProject)!;
+        _projectRepository.DeleteProjectById(projectId);
         return NoContent();
     }
+
 }

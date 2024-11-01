@@ -33,21 +33,21 @@ public class PostDbContext : DbContext
 
         modelBuilder.Entity<Project>(entity =>
        {
-           entity.HasKey(c => c.ProjectId);
-           entity.Property (c => c.ProjectName).IsRequired();
-           entity.Property (c => c.Description);
-           entity.Property(c => c.MainTitle); 
-           entity.Property(c => c.MainText);
-           entity.Property(c => c.Tagline);
-           entity.Property(c => c.LeftTitle);
-           entity.Property(c => c.LeftText);
-           entity.Property(c => c.CenterTitle);
-           entity.Property(c => c.CenterText);
-           entity.Property(c => c.RightTitle);
-           entity.Property(c => c.RightText);
-           entity.Property(c => c.ContactText);
-           entity.Property(c => c.ContactEmail);
-           entity.Property(c => c.ContactPhone);
+           entity.HasKey(r => r.ProjectId);
+           entity.Property(r => r.ProjectName).IsRequired();
+           entity.Property(r => r.SiteName); 
+           entity.Property(r => r.MainTitle); 
+           entity.Property(r => r.MainText);
+           entity.Property(r => r.Tagline);
+           entity.Property(r => r.LeftTitle);
+           entity.Property(r => r.LeftText);
+           entity.Property(r => r.CenterTitle);
+           entity.Property(r => r.CenterText);
+           entity.Property(r => r.RightTitle);
+           entity.Property(r => r.RightText);
+           entity.Property(r => r.ContactText);
+           entity.Property(r => r.ContactEmail).IsRequired();
+           entity.Property(r => r.ContactPhone);
        });
 
         modelBuilder.Entity<User>(entity =>
@@ -70,23 +70,24 @@ public class PostDbContext : DbContext
             entity.Property(u => u.RefreshTokenExpires);
             entity.Property(u => u.Terms);
             entity.Property(u => u.Privacy);
+            entity.Property(u => u.Role);
             entity.HasOne(p => p.Project)
             .WithMany(u => u.Users)
-            .HasForeignKey(p => p.ProjId_fk);
+            .HasForeignKey(u => u.ProjId_fk).IsRequired();
 
         });
 
         modelBuilder.Entity<Post>(entity =>
         {
             entity.HasKey(p => p.PostId);
-            entity.Property(p => p.Title);
+            entity.Property(p => p.Title).IsRequired();
             entity.Property(p => p.PhotoURL);
             entity.Property(p => p.Content).IsRequired();
             entity.Property(p => p.Posted);
             entity.Property(p => p.Visible);
             entity.Property(p => p.Archive);
-            entity.HasOne(p => p.User)
-            .WithMany(u => u.Posts)
+            entity.HasOne(u => u.User)
+            .WithMany(p => p.Posts)
             .HasForeignKey(p => p.UserId_fk);
         });
 
@@ -96,11 +97,11 @@ public class PostDbContext : DbContext
             entity.Property(c => c.Task);
             entity.Property(c => c.Text).IsRequired();
             entity.Property(c => c.ComDate);
-            entity.HasOne(c => c.Post)
-            .WithMany(p => p.Comments)
+            entity.HasOne(p => p.Post)
+            .WithMany(c => c.Comments)
             .HasForeignKey(c => c.PostId_fk);
-            entity.HasOne(c => c.User)
-            .WithMany(u => u.Comments)
+            entity.HasOne(u => u.User)
+            .WithMany(c => c.Comments)
             .HasForeignKey(c => c.UsrId_fk);
         });
 

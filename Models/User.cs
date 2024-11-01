@@ -4,10 +4,11 @@ namespace homes_API.Models;
 
 public class User
 {
-    // [JsonIgnore]
     public int UserId { get; set; }
     [Required]
     public int ProjId_fk { get; set; }
+    [Required]
+    [MinLength(6)]
     public string? UserName { get; set; }
     [Required]
     [MinLength(6)]
@@ -27,6 +28,7 @@ public class User
     public DateTime? RefreshTokenExpires { get; set; } = DateTime.Now;
     public sbyte? Terms { get; set;} = 0;
     public sbyte? Privacy {get; set;} = 0;
+    public sbyte? Role {get; set;} = 0;
 
     public List<Post>? Posts { get; set; }
     public List<Comment>? Comments {get; set;}

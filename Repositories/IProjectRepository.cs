@@ -7,7 +7,8 @@ public interface IProjectRepository
 
 Project CreateProject(Project newProject);
 Project GetProjectById(int projectId);
-Task<Project> GetPojectAsync(int projectId);
-Task UpdateProjectAsync(Project project);
+Project GetProjectFirstRow();
+Project? UpdateProject(Project newProject);
+void DeleteProjectById(int projectId);
    
 }

@@ -46,32 +46,37 @@ public class PostRepository : IPostRepository
                 p.Archive,
                 p.UserId_fk,
                 p.User!.UserName,
+                p.User!.ProjId_fk,
                 p.Comments
             })
                 .ToList();
     }
 
 
-    //Return only the posts by a specific user based on the UserId_fk property of the Post model.
-    public IEnumerable<object> GetUserPosts(int userId)
+    //Return only the posts by a specific project based on the ProjId_fk property of the User model.
+    public IEnumerable<object> GetProjectPosts(int projectId)
     {
-        return _context.Posts!
-        .Include(user => user.User).
-            Select(p => new
+        var posts = _context.Posts!
+            .Include(post => post.User)
+            .Where(post => post.User!.ProjId_fk == projectId)
+            .Select(post => new
             {
-                p.PostId,
-                p.Content,
-                p.Posted,
-                p.PhotoURL,
-                p.Title,
-                p.Visible,
-                p.Archive,
-                p.UserId_fk,
-                p.User!.UserName,
-                p.Comments
+                post.PostId,
+                post.Content,
+                post.Posted,
+                post.PhotoURL,
+                post.Title,
+                post.Visible,
+                post.Archive,
+                post.UserId_fk,
+                post.User!.UserName,
+                post.User.ProjId_fk,
+                post.Comments
             })
-            .Where(post => post.UserId_fk == userId)
-                .ToList();
+            .ToList();
+
+        return posts;
+        
     }
 
     public Post GetPostById(int postId)

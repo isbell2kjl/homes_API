@@ -5,6 +5,7 @@ using homes_API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,13 +14,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDbContext<PostDbContext>();
  
-// builder.Services.AddMySqlDataSource(builder.Configuration.GetConnectionString("Default")!);
+builder.Services.AddRateLimiter(options => {
+
+    options.AddFixedWindowLimiter("LoginRateLimit", limiterOptions =>
+    {   limiterOptions.PermitLimit = 5; //Allow 5 requests
+        limiterOptions.Window = TimeSpan.FromMinutes(1); //Time window for limit
+        limiterOptions.QueueLimit = 0; //No requests are queued
+        limiterOptions.AutoReplenishment = true; //Replenish permits automatically
+   });
+});
+
+
 
 // builder.Services.AddSqlite<PostDbContext>("Data Source=homes_API.db");
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -67,6 +77,8 @@ builder.Services.AddAuthentication(options =>
     };
 }
 );
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "homes_API_tokens", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
@@ -109,6 +121,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseRateLimiter();
 app.MapControllers();
 
 app.Run();

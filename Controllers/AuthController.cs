@@ -3,6 +3,7 @@ using homes_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace homes_API.Controllers;
@@ -38,6 +39,7 @@ public class AuthController : ControllerBase
     }
     [HttpPost]
     [Route("signin")]
+    [EnableRateLimiting("LoginRateLimit")]
     public ActionResult<SignInResponse> SignIn(SignInRequest request)
     {
         var response = _authService.SignIn(request);
