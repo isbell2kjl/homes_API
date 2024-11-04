@@ -44,14 +44,16 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
     private string generateResetToken()
     {
         // token is a cryptographically strong random sequence of values
-        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        // var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        Random random = new Random();
+        string token = random.Next(100000, 1000000).ToString(); // Generates a number between 100000 and 999999
 
         // ensure token is unique by checking against db
         var tokenIsUnique = !_context!.Users!.Any(x => x.ResetToken == token);
         if (!tokenIsUnique)
             return generateResetToken();
 
-        return token;
+        return token.ToString();
     }
 
     private void sendPasswordResetEmail(User user, string origin)
@@ -60,23 +62,31 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
         if (!string.IsNullOrEmpty(origin))
 
         {
-             
             // origin exists if request sent from browser single page app (e.g. Angular or React)
-            // so send link to verify via single page app
-            var resetUrl = $"{origin}/reset-password?token={user.ResetToken}";
-            message = $@"<p>Hi {user.UserName},</p><p>Please click the below link to set your password, the link will be valid for 5 minutes:</p>
-                            <p><a href=""{resetUrl}"">Set Password</a></p>";
+            // so send link to verify via single page app.
+            message = $@"
+            <html>
+            <body>
+                <div style='font-size:16px;'>
+                    <p>Hi {user.UserName},</p>
+                    <p>Here is the reset token you requested. It's valid for 5 minutes.</p>
+                </div>
+                <div style='margin-top:10px;'>
+                    <h2>{user.ResetToken}</h2>
+            </body>
+            </html>";
+            // Send email with resetMessage
         }
         else
         {
-            message = $@"<p>Hi {user.UserName},</p><p>Please use the below token to set your password with the <code>/accounts/reset-password</code> api route:</p>
-                            <p><code>{user.ResetToken}</code></p>";
-        }
+            message = $"Here is the reset token you requested. It's valid for 5 minutes. {user.ResetToken}.";
+
+        }  
 
         _emailRepository.Send(
             to: user.Email,
-            subject: "Sign-up Verification API - Set Password",
-            html: $@"<h4>Set Password Email</h4>
+            subject: "Sign-up Verification",
+            html: $@"<h2>Reset Token</h2>
                         {message}"
         );
     }

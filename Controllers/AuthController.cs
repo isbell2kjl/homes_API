@@ -93,6 +93,7 @@ public class AuthController : ControllerBase
     //expired time is later than current time.
     [HttpPost]
     [Route("validate-reset-token")]
+    [EnableRateLimiting("LoginRateLimit")]
     public IActionResult ValidateResetToken(ValidateResetTokenRequest model)
     {
         _forgotPasswordRepository.ValidateResetToken(model);

@@ -123,7 +123,7 @@ public class AuthService : IAuthService
     {
         var user = _context!.Users!.SingleOrDefault(x =>
             x.RefreshToken == token && x.RefreshTokenExpires > DateTime.UtcNow);
-        if (user == null) throw new AppException("Invalid token");
+        if (user == null) throw new Exception("Invalid token");
         return user;
     }
     public SignInResponse TokenRefresh(string token)

@@ -11,14 +11,15 @@ using Microsoft.AspNetCore.RateLimiting;
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Add services to the container.
+
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDbContext<PostDbContext>();
- 
+
+// Add services to the container.
 builder.Services.AddRateLimiter(options => {
 
     options.AddFixedWindowLimiter("LoginRateLimit", limiterOptions =>
@@ -28,8 +29,7 @@ builder.Services.AddRateLimiter(options => {
         limiterOptions.AutoReplenishment = true; //Replenish permits automatically
    });
 });
-
-
+ 
 
 // builder.Services.AddSqlite<PostDbContext>("Data Source=homes_API.db");
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -110,6 +110,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseCors(builder => builder
     .WithOrigins("http://localhost:8100","http://localhost:4200", "http://localhost:3000")
     .AllowAnyHeader()
@@ -122,6 +124,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();
+
 app.MapControllers();
 
 app.Run();
