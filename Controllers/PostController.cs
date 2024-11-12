@@ -57,26 +57,26 @@ public class PostController : ControllerBase
         return Created(nameof(GetPostById), result);
     }
 
+
     [HttpGet]
-    [Route("{searchposts}")]
-    public async Task<ActionResult<IEnumerable<Post>>> Search(string name)
+    [Route("search")]
+    public async Task<ActionResult<IEnumerable<Post>>> Search([FromQuery] string name, [FromQuery] int projectId)
     {
         try
         {
-            var result = await _postRepository.Search(name);
+            var result = await _postRepository.Search(name, projectId);
 
-            if (result.Any()) 
+            if (result.Any())
             {
                 return Ok(result);
-            }    
+            }
+
+            return NotFound();
         }
         catch (Exception)
         {
-            return NotFound(); 
+            return BadRequest();
         }
-        return StatusCode(StatusCodes.Status500InternalServerError,
-        "Error retrieving data from the database");
-
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

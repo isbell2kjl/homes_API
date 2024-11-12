@@ -31,8 +31,8 @@ public class AuthService : IAuthService
 
     public User SignUp(User user)
     {
-        // TODO: Hash Password
-        // user.Password = "n:ryKT6(<b56";
+        // Hash Password
+        
         var passwordHash = Bcrypt.HashPassword(user.Password);
         user.Password = passwordHash;
 

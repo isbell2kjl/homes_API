@@ -59,13 +59,13 @@ public class CommentController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPut]
     [Route("{comId:int}")]
-    public ActionResult<Comment> UpdateComment(Comment comment)
+    public ActionResult<Comment> UpdateComment(int comId, CommentUpdate editComment)
     {
-        if (!ModelState.IsValid || comment == null)
+        if (!ModelState.IsValid || editComment == null)
         {
             return BadRequest();
         }
-        return Ok(_commentRepository.UpdateComment(comment));
+        return Ok(_commentRepository.UpdateComment(comId, editComment));
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

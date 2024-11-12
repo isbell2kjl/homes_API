@@ -8,7 +8,7 @@ public interface ICommentRepository
     IEnumerable<object> GetPostComments(int PostId);
     Comment? GetCommentById(int ComId);
     Comment CreateComment(Comment newComment);
-    Comment? UpdateComment(Comment newComment);
+    Comment? UpdateComment(int comId, CommentUpdate editComment);
     void DeleteCommentById(int ComId);
 
-}
+} 

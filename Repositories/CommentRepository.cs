@@ -38,7 +38,6 @@ public class CommentRepository : ICommentRepository
             Select(c => new
             {
                 c.ComId,
-                c.Task,
                 c.Text,
                 c.ComDate,
                 c.UsrId_fk,
@@ -56,7 +55,6 @@ public class CommentRepository : ICommentRepository
             Select(c => new
             {
                 c.ComId,
-                c.Task,
                 c.Text,
                 c.ComDate,
                 c.UsrId_fk,
@@ -72,15 +70,13 @@ public class CommentRepository : ICommentRepository
         return _context.Comments!.SingleOrDefault(c => c.ComId == comId);
     }
 
-    public Comment? UpdateComment(Comment newComment)
+    public Comment? UpdateComment(int comId, CommentUpdate editComment)
     {
-        var originalComment = _context.Comments!.Find(newComment.ComId);
+        var originalComment = _context.Comments!.Find(comId);
         if (originalComment != null)
         {
-            originalComment.Task = newComment.Task;
-            originalComment.Text = newComment.Text;
-            originalComment.ComDate = DateTime.Now;
-            _context.SaveChanges();
+            originalComment.Text = editComment.Text;
+            _context.SaveChanges(); 
         }
         return originalComment;
     }

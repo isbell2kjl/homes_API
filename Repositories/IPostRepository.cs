@@ -8,7 +8,7 @@ public interface IPostRepository
     IEnumerable<object> GetAllPosts();
     // IEnumerable<object> GetVisiblePosts();
     IEnumerable<object> GetProjectPosts(int projectId);
-    Task<IEnumerable<Post>> Search(string name);
+    Task<IEnumerable<Post>> Search(string name, int projectId);
     // Task<IEnumerable> GetActivePosts(int archive);
     Post GetPostById(int postID);
     // IEnumerable<object>? GetPostById(int postId);

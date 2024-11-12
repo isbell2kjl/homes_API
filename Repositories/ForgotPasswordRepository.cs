@@ -63,7 +63,6 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
 
         {
             // origin exists if request sent from browser single page app (e.g. Angular or React)
-            // so send link to verify via single page app.
             message = $@"
             <html>
             <body>
@@ -79,9 +78,10 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
         }
         else
         {
-            message = $"Here is the reset token you requested. It's valid for 5 minutes. {user.ResetToken}.";
+            //text only version, '{0}' used to force a new line.
+            message = $"Here is the reset token you requested. It's valid for 5 minutes.{0} {user.ResetToken}.";
 
-        }  
+        }
 
         _emailRepository.Send(
             to: user.Email,

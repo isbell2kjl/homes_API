@@ -94,9 +94,9 @@ public class PostDbContext : DbContext
         modelBuilder.Entity<Comment>(entity =>
         {
             entity.HasKey(c => c.ComId);
-            entity.Property(c => c.Task);
             entity.Property(c => c.Text).IsRequired();
-            entity.Property(c => c.ComDate);
+            entity.Property(c => c.ComDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(c => c.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
             entity.HasOne(p => p.Post)
             .WithMany(c => c.Comments)
             .HasForeignKey(c => c.PostId_fk);
