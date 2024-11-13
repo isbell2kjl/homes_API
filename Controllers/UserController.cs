@@ -22,19 +22,20 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetUsers()
+    [Route("project/{projectId:int}")]
+    public ActionResult<IEnumerable<User>> GetUsers(int projectId)
     {
-        return Ok(_userRepository.GetAllUsers());
+        return Ok(_userRepository.GetAllUsers(projectId));
     }
 
     //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     [HttpGet]
     [Route("{search}")]
-    public async Task<ActionResult<IEnumerable<User>>> Search(string name)
+    public async Task<ActionResult<IEnumerable<User>>> Search([FromQuery] string name, [FromQuery] int projectId)
     {
         try
         {
-            var result = await (_userRepository.Search(name));
+            var result = await _userRepository.Search(name, projectId);
 
             if (result.Any())
             {

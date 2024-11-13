@@ -83,43 +83,9 @@ public class PostRepository : IPostRepository
     public Post GetPostById(int postId)
     {
         return _context.Posts!.FirstOrDefault(p => p.PostId == postId)!;
-        // var posts = _context.Posts!
-        //     .Include(post => post.User)
-        //     .Where(post => post.PostId == postId)
-        //     .Select(post => new
-        //     {
-        //         post.PostId,
-        //         post.Content,
-        //         post.Posted,
-        //         post.PhotoURL,
-        //         post.Title,
-        //         post.Visible,
-        //         post.Archive,
-        //         post.UserId_fk,
-        //         post.User!.UserName,
-        //         post.User.ProjId_fk,
-        //         post.Comments
-        //     })
-        //     .ToList();
-
-        // return posts;
+        
         
     }
-
-    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
-    // public async Task<IEnumerable<Post>> Search(string name)
-    // {
-    //     IQueryable<Post> query = _context.Posts!;
-
-    //     if (!string.IsNullOrEmpty(name))
-    //     {
-    //         query = query!.Where(p => p.Title!.Contains(name)
-    //                     || p.Content!.Contains(name));
-    //     }
-
-    //     return await query.ToListAsync();
-
-    // }
 
     public async Task<IEnumerable<Post>> Search(string name, int projectId)
 {

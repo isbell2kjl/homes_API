@@ -28,12 +28,14 @@ public class UserRepository : IUserRepository
     //https://khalidabuhakmeh.com/ef-core-and-aspnet-core-cycle-issue-and-solution
     //https://qawithexperts.com/article/asp.net/ways-to-fix-circular-reference-detected-error-in-entity-fram/63
 
-    public IEnumerable<object> GetAllUsers()
+    //modified 11/12/24 go filter by project.
+    public IEnumerable<object> GetAllUsers(int projectId)
     {
         return _context!
             .Users!
+             .Where(u => u!.ProjId_fk == projectId)
             .Include(u => u.Posts)
-             
+
 
             .Select(u => new
             {
@@ -69,10 +71,13 @@ public class UserRepository : IUserRepository
     }
 
 
-//search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
-    public async Task<IEnumerable<User>> Search(string name)
+    //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
+    public async Task<IEnumerable<User>> Search(string name, int projectId)
     {
         IQueryable<User> query = _context.Users!;
+
+        // Filter by projectId (required)
+        query = query.Where(p => p.ProjId_fk == projectId);
 
         if (!string.IsNullOrEmpty(name))
         {
@@ -85,16 +90,16 @@ public class UserRepository : IUserRepository
     }
 
     public async Task<bool> UserNameExists(string username)
-    { 
-        
-         return await _context!.Users!.AnyAsync(u => u.UserName == username)!;
+    {
+
+        return await _context!.Users!.AnyAsync(u => u.UserName == username)!;
 
     }
 
     public async Task<bool> EmailExists(string email)
-    { 
-        
-         return await _context!.Users!.AnyAsync(u => u.Email == email)!;
+    {
+
+        return await _context!.Users!.AnyAsync(u => u.Email == email)!;
 
     }
 

@@ -27,7 +27,7 @@ public class PostController : ControllerBase
 
 
     [HttpGet]
-    [Route("projectposts/{projectId:int}")]
+    [Route("project/{projectId:int}")]
     public ActionResult<IEnumerable<object>> GetProjectPosts(int projectId)
     {
         return Ok(_postRepository.GetProjectPosts(projectId));

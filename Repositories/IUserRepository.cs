@@ -6,8 +6,8 @@ public interface IUserRepository
 {
 
     // IEnumerable<User> GetAllUsers();
-    IEnumerable<object> GetAllUsers();
-    Task<IEnumerable<User>> Search(string name);
+    IEnumerable<object> GetAllUsers(int projectId);
+    Task<IEnumerable<User>> Search(string name, int projectId);
     Task<bool> UserNameExists(string username);
     Task<bool> EmailExists(string email);
     User GetUserById(int userId);
