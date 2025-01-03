@@ -8,6 +8,7 @@ public class PostDbContext : DbContext
 {
     public DbSet<Project>? Projects { get; set; }
     public DbSet<User>? Users { get; set; }
+    public DbSet<Request>? Requests { get; set; }
     public DbSet<Post>? Posts { get; set; }
     public DbSet<Comment>? Comments { get; set; }
 
@@ -35,8 +36,9 @@ public class PostDbContext : DbContext
        {
            entity.HasKey(r => r.ProjectId);
            entity.Property(r => r.ProjectName).IsRequired();
-           entity.Property(r => r.SiteName); 
-           entity.Property(r => r.MainTitle); 
+           entity.Property(r => r.ProjectName);
+           entity.Property(r => r.SiteName);
+           entity.Property(r => r.MainTitle);
            entity.Property(r => r.MainText);
            entity.Property(r => r.Tagline);
            entity.Property(r => r.LeftTitle);
@@ -47,7 +49,10 @@ public class PostDbContext : DbContext
            entity.Property(r => r.RightText);
            entity.Property(r => r.ContactText);
            entity.Property(r => r.ContactEmail).IsRequired();
+           entity.Property(r => r.ContactEmail);
            entity.Property(r => r.ContactPhone);
+           entity.Property(r => r.Created).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(r => r.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
        });
 
         modelBuilder.Entity<User>(entity =>
@@ -63,7 +68,8 @@ public class PostDbContext : DbContext
             entity.Property(u => u.City);
             entity.Property(u => u.State);
             entity.Property(u => u.Country);
-            entity.Property(u => u.Created);
+            entity.Property(u => u.Created).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(u => u.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
             entity.Property(u => u.ResetToken);
             entity.Property(u => u.ResetTokenExpires);
             entity.Property(u => u.RefreshToken);
@@ -71,10 +77,27 @@ public class PostDbContext : DbContext
             entity.Property(u => u.Terms);
             entity.Property(u => u.Privacy);
             entity.Property(u => u.Role);
+            entity.Property(u => u.ProjId_fk).HasDefaultValue(1);
             entity.HasOne(p => p.Project)
             .WithMany(u => u.Users)
-            .HasForeignKey(u => u.ProjId_fk).IsRequired();
+            .HasForeignKey(u => u.ProjId_fk).IsRequired()
+            .OnDelete(DeleteBehavior.Cascade); // Enables cascade delete
 
+        });
+
+        modelBuilder.Entity<Request>(entity =>
+        {
+            entity.HasKey(e => e.RequestId);
+            entity.Property(e => e.Status).IsRequired().HasMaxLength(20).HasDefaultValue("Pending");
+            entity.Property(e => e.RequestedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+            entity.HasOne(u => u.User)
+                .WithMany(e => e.Requests)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(r => r.Project)
+                .WithMany(e => e.Requests)
+                .HasForeignKey(e => e.ProjectId);
         });
 
         modelBuilder.Entity<Post>(entity =>
@@ -83,12 +106,14 @@ public class PostDbContext : DbContext
             entity.Property(p => p.Title).IsRequired();
             entity.Property(p => p.PhotoURL);
             entity.Property(p => p.Content).IsRequired();
-            entity.Property(p => p.Posted);
+            entity.Property(p => p.Posted).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(p => p.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
             entity.Property(p => p.Visible);
             entity.Property(p => p.Archive);
             entity.HasOne(u => u.User)
             .WithMany(p => p.Posts)
-            .HasForeignKey(p => p.UserId_fk);
+            .HasForeignKey(p => p.UserId_fk)
+            .OnDelete(DeleteBehavior.Cascade); // Enables cascade delete
         });
 
         modelBuilder.Entity<Comment>(entity =>
@@ -102,7 +127,8 @@ public class PostDbContext : DbContext
             .HasForeignKey(c => c.PostId_fk);
             entity.HasOne(u => u.User)
             .WithMany(c => c.Comments)
-            .HasForeignKey(c => c.UsrId_fk);
+            .HasForeignKey(c => c.UsrId_fk)
+            .OnDelete(DeleteBehavior.Cascade); // Enables cascade delete
         });
 
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);

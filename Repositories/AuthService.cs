@@ -31,16 +31,32 @@ public class AuthService : IAuthService
 
     public User SignUp(User user)
     {
-        // Hash Password
-        
-        var passwordHash = Bcrypt.HashPassword(user.Password);
+        // Generate a random temporary password
+        var tempPassword = GenerateRandomPassword();
+        // Hash the password
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(tempPassword);
+
         user.Password = passwordHash;
 
+        // Save user to the database
         _context!.Add(user);
         _context.SaveChanges();
 
+        // Replace the hashed password with the plain text password
+        // to return it to the caller (e.g., for email purposes)
+        user.Password = tempPassword;
+
         return user;
     }
+
+    private string GenerateRandomPassword(int length = 10)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new Random();
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
 
     private string BuildToken(User user)
     {
@@ -56,8 +72,16 @@ public class AuthService : IAuthService
         {
         new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
         new Claim("UserId", user.UserId.ToString()),
+        new Claim("Role", user.Role.ToString()),
         new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? "")
         };
+
+        // Debugging: Log claims
+        // Console.WriteLine("JWT Claims:");
+        // foreach (var claim in claims)
+        // {
+        //     Console.WriteLine($"Type: {claim.Type}, Value: {claim.Value}");
+        // }
 
         // Create token
         var jwt = new JwtSecurityToken(
@@ -122,8 +146,11 @@ public class AuthService : IAuthService
     private static User getUserByRefreshToken(string token)
     {
         var user = _context!.Users!.SingleOrDefault(x =>
-            x.RefreshToken == token && x.RefreshTokenExpires > DateTime.UtcNow);
-        if (user == null) throw new Exception("Invalid token");
+            x.RefreshToken == token && x.RefreshTokenExpires > DateTime.Now);
+        if (user == null) throw new AppException("Invalid token");
+
+        // Console.WriteLine($"Found user: {user.UserName} with token: {user.RefreshToken}");
+
         return user;
     }
     public SignInResponse TokenRefresh(string token)
@@ -132,28 +159,39 @@ public class AuthService : IAuthService
         var user = getUserByRefreshToken(token);
 
         if (user is null || user.RefreshTokenExpires <= DateTime.Now)
-            throw new AppException("Invalid client request");
+            throw new AppException("Invalid client request. Please sign in again.");
 
         var newAccessToken = BuildToken(user);
-        var newRefreshToken = GenerateRefreshToken()!;
-        user.RefreshToken = newRefreshToken;
 
-        // save changes to db
-        _context!.Users!.Update(user);
+        // // Only issue a new refresh token if it's near expiry
+        // if (user.RefreshTokenExpires - DateTime.Now <= TimeSpan.FromMinutes(30))
+        // {
+        var newRefreshToken = GenerateRefreshToken();
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpires = DateTime.Now.AddDays(7);
+
+        // Save changes to DB
+        _context.Users.Update(user);
         _context.SaveChanges();
 
         return new SignInResponse(user, newAccessToken, newRefreshToken);
+        // }
+
+        // Return without issuing a new refresh token
+        // return new SignInResponse(user, newAccessToken, user.RefreshToken);
     }
 
     public void TokenRevoke(string token)
     {
         var user = getUserByRefreshToken(token);
 
-        user.RefreshToken = null;
-        //DateTime fields cannot be set to null.  Not sure of workaround.
-        user.RefreshTokenExpires = DateTime.Now;
+        if (user == null) throw new AppException("Invalid token");
 
-        // save changes to db
+        // Remove refresh token from the database
+        user.RefreshToken = null;
+        user.RefreshTokenExpires = DateTime.Now.AddSeconds(-1);
+
+        // Save changes to the database
         _context!.Users!.Update(user);
         _context.SaveChanges();
 

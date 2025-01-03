@@ -19,12 +19,14 @@ public class CommentController : ControllerBase
         _commentRepository = repository;
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
     public ActionResult<IEnumerable<object>> GetComments()
     {
         return Ok(_commentRepository.GetAllComments());
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
     [Route("postComment/{postId:int}")]
     public ActionResult<IEnumerable<object>> GetPComments(int postId)
@@ -32,6 +34,7 @@ public class CommentController : ControllerBase
         return Ok(_commentRepository.GetPostComments(postId));
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
     [Route("{comId:int}")]
     public ActionResult<Comment> GetCommentById(int comId)

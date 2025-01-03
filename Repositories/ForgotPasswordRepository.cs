@@ -1,7 +1,6 @@
 using homes_API.Models;
 using homes_API.Migrations;
 using homes_API.Helpers;
-using System.Security.Cryptography;
 using Bcrypt = BCrypt.Net.BCrypt;
 
 namespace homes_API.Repositories;
@@ -32,7 +31,7 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
 
         // create reset token that expires after 1 day
         user.ResetToken = generateResetToken();
-        user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(5);
+        user.ResetTokenExpires = DateTime.Now.AddMinutes(5);
 
         _context!.Users!.Update(user);
         _context.SaveChanges();
@@ -101,7 +100,7 @@ public class ForgotPasswordRepository : IForgotPasswordRepository
         //verify that provided token matches database and that 
         //expired time is later than current time.
         var user = _context!.Users!.SingleOrDefault(x =>
-            x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
+            x.ResetToken == token && x.ResetTokenExpires > DateTime.Now);
         if (user == null) throw new AppException("Invalid token");
         return user;
     }

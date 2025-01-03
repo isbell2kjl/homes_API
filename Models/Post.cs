@@ -11,7 +11,8 @@ public class Post
     public string? PhotoURL { get; set; }
     [Required]
     public string? Content { get; set; }
-    public DateTime? Posted { get; set; } =  DateTime.Now;
+    public DateTime? Posted { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public sbyte? Visible { get; set;} = 0;
     public sbyte? Archive { get; set;} = 0;
 

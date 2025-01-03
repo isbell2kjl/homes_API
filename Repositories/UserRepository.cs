@@ -1,5 +1,6 @@
 using homes_API.Migrations;
 using homes_API.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace homes_API.Repositories;
@@ -70,6 +71,12 @@ public class UserRepository : IUserRepository
         return _context!.Users!.SingleOrDefault(c => c.UserId == userId)!;
     }
 
+    public IEnumerable<User> GetAdminUsers()
+    {
+        // Fetch all users with role 1 (admin)
+        return _context.Users.Where(c => c.Role == 1).ToList();
+    }
+
 
     //search idea from https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
     public async Task<IEnumerable<User>> Search(string name, int projectId)
@@ -96,6 +103,32 @@ public class UserRepository : IUserRepository
 
     }
 
+    public async Task<bool> AssignProjectToUser(int projectId, string email)
+    {
+        // Find the non-logged-in user by email
+        var nonLoggedInUser = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        if (nonLoggedInUser == null)
+        {
+            throw new ArgumentException("User with the given email does not exist.");
+        }
+
+        // Find the property
+        var project = await _context.Users.SingleOrDefaultAsync(p => p.ProjId_fk == projectId);
+        if (project == null)
+        {
+            throw new ArgumentException("Project not found.");
+        }
+
+        // Assign the property to the non-logged-in user
+        project.ProjId_fk = nonLoggedInUser.ProjId_fk;
+
+        // Save changes to the database
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+
     public async Task<bool> EmailExists(string email)
     {
 
@@ -109,16 +142,23 @@ public class UserRepository : IUserRepository
 
         //password can only be updated via the ForgotPassword route.
 
-        originalUser.UserName = editUser.UserName;
-        originalUser.Email = editUser.Email;
-        originalUser.FirstName = editUser.FirstName;
-        originalUser.LastName = editUser.LastName;
-        originalUser.City = editUser.City;
-        originalUser.State = editUser.State;
-        originalUser.Country = editUser.Country;
+        // Update only if new values are provided
+        if (!string.IsNullOrEmpty(editUser.UserName)) originalUser.UserName = editUser.UserName;
+        if (!string.IsNullOrEmpty(editUser.Email)) originalUser.Email = editUser.Email;
+        if (!string.IsNullOrEmpty(editUser.FirstName)) originalUser.FirstName = editUser.FirstName;
+        if (!string.IsNullOrEmpty(editUser.LastName)) originalUser.LastName = editUser.LastName;
+        if (!string.IsNullOrEmpty(editUser.City)) originalUser.City = editUser.City;
+        if (!string.IsNullOrEmpty(editUser.State)) originalUser.State = editUser.State;
+        if (!string.IsNullOrEmpty(editUser.Country)) originalUser.Country = editUser.Country;
+
+        // Conditionally update ProjIdFk and Role
+        if (editUser.ProjId_fk.HasValue) originalUser.ProjId_fk = editUser.ProjId_fk.Value;
+        if (editUser.Role.HasValue) originalUser.Role = editUser.Role.Value;
+
 
         _context.Users!.Update(originalUser);
         _context.SaveChanges();
 
     }
+
 }

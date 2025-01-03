@@ -19,13 +19,14 @@ public class PostController : ControllerBase
         _postRepository = repository;
     }
 
+
     [HttpGet]
     public ActionResult<IEnumerable<object>> GetPosts()
     {
         return Ok(_postRepository.GetAllPosts());
     }
 
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
     [Route("project/{projectId:int}")]
     public ActionResult<IEnumerable<object>> GetProjectPosts(int projectId)
@@ -33,6 +34,7 @@ public class PostController : ControllerBase
         return Ok(_postRepository.GetProjectPosts(projectId));
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
     [Route("{postId:int}")]
     public ActionResult<Post> GetPostById(int postId)

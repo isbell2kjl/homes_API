@@ -41,6 +41,7 @@ public class ProjectController : ControllerBase
         return Ok(project);
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost]
     public ActionResult<Project> CreateProject(Project project)
     {
@@ -52,10 +53,39 @@ public class ProjectController : ControllerBase
         return Created(nameof(GetProjectById), result);
     }
 
-     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet]
+    [Route("check-email")]
+    public async Task<IActionResult> CheckEmail(string email)
+    {
+        if (!await _projectRepository.EmailExists(email))
+        {
+            return BadRequest("Email does not exist.");
+        }
+        return Ok();
+    }
+
+    [HttpGet]
+    [Route("check-email-true")]
+    public async Task<IActionResult> CheckEmailTrue(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            return BadRequest("Email parameter is required.");
+        }
+
+        if (await _projectRepository.EmailExists(email))
+        {
+            return BadRequest("Email is already in use.");
+        }
+
+        return Ok();
+    }
+
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPut]
     [Route("{projectId:int}")]
-    public ActionResult<Project> UpdatePost(Project project)
+    public ActionResult<Project> UpdateProject(Project project)
     {
         if (!ModelState.IsValid || project == null)
         {

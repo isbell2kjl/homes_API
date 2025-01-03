@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace homes_API.Models;
 
@@ -10,8 +11,8 @@ public class User
     [Required]
     [MinLength(6)]
     public string? UserName { get; set; }
-    [Required]
     [MinLength(6)]
+    [JsonIgnore]
     public string? Password { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
@@ -21,17 +22,21 @@ public class User
     public string? City { get; set; }
     public string? State { get; set; }
     public string? Country { get; set; } = "USA";
-    public DateTime? Created { get; set; } =  DateTime.Now;
+    public DateTime? Created { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public string? ResetToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
+
+    [JsonIgnore] //returned in http only cookie
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpires { get; set; } = DateTime.Now;
-    public sbyte? Terms { get; set;} = 0;
-    public sbyte? Privacy {get; set;} = 0;
-    public sbyte? Role {get; set;} = 0;
+    public sbyte? Terms { get; set; } = 0;
+    public sbyte? Privacy { get; set; } = 0;
+    public sbyte? Role { get; set; } = 0;
 
     public List<Post>? Posts { get; set; }
-    public List<Comment>? Comments {get; set;}
-    public Project? Project {get; set;}
+    public List<Comment>? Comments { get; set; }
+    public List<Request>? Requests { get; set; }
+    public Project? Project { get; set; }
 
 }

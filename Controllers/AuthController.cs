@@ -48,8 +48,12 @@ public class AuthController : ControllerBase
         if (response == null)
             return BadRequest(new { message = "Username or password is incorrect" });
 
-        return Ok(response);
-
+       return Ok(new {
+        userId = response.Id,
+        username = response.UserName,
+        token = response.Token
+        // Other user details...
+    });
     }
 
     [HttpPost("refresh-token")]
@@ -69,15 +73,25 @@ public class AuthController : ControllerBase
     [HttpPost("revoke-token")]
     public IActionResult RevokeToken()
     {
-    //    // accept refresh token in request body or cookie
-        var token = Request.Cookies["refreshToken"];
+        // Extract the refresh token from the HTTP-only cookie
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (string.IsNullOrEmpty(refreshToken))
+            return BadRequest(new { message = "Refresh token not found in cookies." });
 
-        if (string.IsNullOrEmpty(token))
-            return BadRequest(new { message = "Token is required" });
+        try
+        {
+            // Revoke the token in the database
+            _authService.TokenRevoke(refreshToken);
 
+            // Clear the refresh token cookie from the client
+            clearTokenCookie();
 
-        _authService.TokenRevoke(token);
-        return Ok(new { message = "Token revoked" });
+            return Ok(new { message = "Token revoked successfully." });
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
     }
 
     //Post route to request a token by email for password reset.
@@ -119,10 +133,25 @@ public class AuthController : ControllerBase
             HttpOnly = true,
             SameSite = SameSiteMode.None,
             Secure = true,
-            Expires = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.Now.AddDays(7)
         };
         Response.Cookies.Append("refreshToken", token, cookieOptions);
     }
+
+    // This method clears the refresh token cookie
+    private void clearTokenCookie()
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.None,
+            Secure = true,
+            Expires = DateTime.Now.AddSeconds(-1), // Set expiration to the past
+        };
+        
+        Response.Cookies.Delete("refreshToken", cookieOptions);
+    }
+
 
 }
 
