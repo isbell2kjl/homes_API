@@ -25,9 +25,7 @@ public class PostDbContext : DbContext
         var connectionString = Configuration.GetConnectionString("Default");
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
-
-
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

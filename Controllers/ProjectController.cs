@@ -10,11 +10,13 @@ public class ProjectController : ControllerBase
 {
     private readonly ILogger<ProjectController> _logger;
     private readonly IProjectRepository _projectRepository;
+    private readonly IQueryService _queryService;
 
-    public ProjectController(ILogger<ProjectController> logger, IProjectRepository repository)
+    public ProjectController(ILogger<ProjectController> logger, IProjectRepository repository, IQueryService queryService)
     {
         _logger = logger;
         _projectRepository = repository;
+        _queryService = queryService;
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -101,6 +103,20 @@ public class ProjectController : ControllerBase
     {
         _projectRepository.DeleteProjectById(projectId);
         return NoContent();
+    }
+
+    [HttpGet("test-send-email/{projectId}")]
+    public async Task<IActionResult> TestSendEmail(int projectId)
+    {
+        await _queryService.GetQueryResultProperties(projectId);
+        return Ok("Email test completed.");
+    }
+
+     [HttpGet("test-send-email-details/{projectId}")]
+    public async Task<IActionResult> TestSendEmailDetails(int projectId)
+    {
+        await _queryService.GetQueryResultTasks(projectId);
+        return Ok("Email test completed.");
     }
 
 }

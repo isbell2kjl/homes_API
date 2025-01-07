@@ -15,15 +15,15 @@ public class AuthController : ControllerBase
     private readonly ILogger<AuthController> _logger;
     private readonly IAuthService _authService;
     private readonly IForgotPasswordRepository _forgotPasswordRepository;
-    private readonly IEmailRepository _emailRepository;
+    private readonly IRecaptchaService _recaptchaService;
 
     public AuthController(ILogger<AuthController> logger, IAuthService service, IForgotPasswordRepository forgotPasswordRepository,
-    IEmailRepository emailRepository)
+    IRecaptchaService recaptchaService)
     {
         _logger = logger;
         _authService = service;
         _forgotPasswordRepository = forgotPasswordRepository;
-        _emailRepository = emailRepository;
+        _recaptchaService = recaptchaService;
     }
 
     [HttpPost]
@@ -48,12 +48,13 @@ public class AuthController : ControllerBase
         if (response == null)
             return BadRequest(new { message = "Username or password is incorrect" });
 
-       return Ok(new {
-        userId = response.Id,
-        username = response.UserName,
-        token = response.Token
-        // Other user details...
-    });
+        return Ok(new
+        {
+            userId = response.Id,
+            username = response.UserName,
+            token = response.Token
+            // Other user details...
+        });
     }
 
     [HttpPost("refresh-token")]
@@ -148,8 +149,28 @@ public class AuthController : ControllerBase
             Secure = true,
             Expires = DateTime.Now.AddSeconds(-1), // Set expiration to the past
         };
-        
+
         Response.Cookies.Delete("refreshToken", cookieOptions);
+    }
+
+    [HttpPost]
+    [Route("verify-recaptcha")]
+    public async Task<IActionResult> VerifyRecaptcha(RecaptchaRequest request)
+    {
+        // _logger.LogInformation($"Received reCAPTCHA token: {request.Token}");  // Log received token
+
+        var isValid = await _recaptchaService.VerifyRecaptcha(request.Token);
+        // _logger.LogInformation($"reCAPTCHA validation result: {isValid}");
+
+        if (!isValid)
+        {
+            // _logger.LogInformation("Invalid reCAPTCHA.");  // Log failure
+            return BadRequest("Invalid reCAPTCHA.");
+        }
+
+        // _logger.LogInformation("reCAPTCHA verified successfully.");  // Log success
+        // return Ok("reCAPTCHA verified successfully.");
+        return Ok(new { message = "reCAPTCHA verified successfully." });
     }
 
 

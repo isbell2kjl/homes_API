@@ -41,6 +41,10 @@ builder.Services.AddScoped<IEmailRepository,EmailRepository>();
 builder.Services.AddScoped<IContactRepository,ContactRepository>();
 builder.Services.AddScoped<IWebMasterRepository,WebMasterRepository>();
 builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IRecaptchaService, RecaptchaService>();
+builder.Services.AddScoped<IQueryService, QueryService>();
+
 
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
