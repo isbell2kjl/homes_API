@@ -119,4 +119,11 @@ public class ProjectController : ControllerBase
         return Ok("Email test completed.");
     }
 
+    [HttpGet("send-weekly-reports/{projectId}")]
+    public async Task<IActionResult> QueryAndSendReports(int projectId)
+    {
+        await _queryService.QueryAndSendReports(projectId);
+        return Ok(new { message = "Email successfully sent." });
+    }
+
 }
