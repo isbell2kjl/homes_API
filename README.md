@@ -1,0 +1,1 @@
+Homes_API is the backend service for a real estate management application, built using .NET 8.0 and connected to a MySQL database. It serves as the API layer for an Angular frontend, providing essential functionality for users to manage and track real estate properties, including buying and selling activities.
