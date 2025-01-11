@@ -79,7 +79,8 @@ public class PostDbContext : DbContext
             entity.HasOne(p => p.Project)
             .WithMany(u => u.Users)
             .HasForeignKey(u => u.ProjId_fk).IsRequired()
-            .OnDelete(DeleteBehavior.Cascade); // Enables cascade delete
+            .OnDelete(DeleteBehavior.Cascade)
+            .HasConstraintName("FK_User_Project");
 
         });
 
@@ -92,10 +93,13 @@ public class PostDbContext : DbContext
             entity.HasOne(u => u.User)
                 .WithMany(e => e.Requests)
                 .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Request_User");
+
             entity.HasOne(r => r.Project)
                 .WithMany(e => e.Requests)
-                .HasForeignKey(e => e.ProjectId);
+                .HasForeignKey(e => e.ProjectId)
+                .HasConstraintName("FK_Request_Project");
         });
 
         modelBuilder.Entity<Post>(entity =>
@@ -111,7 +115,8 @@ public class PostDbContext : DbContext
             entity.HasOne(u => u.User)
             .WithMany(p => p.Posts)
             .HasForeignKey(p => p.UserId_fk)
-            .OnDelete(DeleteBehavior.Cascade); // Enables cascade delete
+            .OnDelete(DeleteBehavior.Cascade)
+            .HasConstraintName("FK_Post_User");
         });
 
         modelBuilder.Entity<Comment>(entity =>
@@ -122,11 +127,13 @@ public class PostDbContext : DbContext
             entity.Property(c => c.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
             entity.HasOne(p => p.Post)
             .WithMany(c => c.Comments)
-            .HasForeignKey(c => c.PostId_fk);
+            .HasForeignKey(c => c.PostId_fk)
+             .OnDelete(DeleteBehavior.Cascade)
+            .HasConstraintName("FK_Comment_Post");
             entity.HasOne(u => u.User)
             .WithMany(c => c.Comments)
             .HasForeignKey(c => c.UsrId_fk)
-            .OnDelete(DeleteBehavior.Cascade); // Enables cascade delete
+            .HasConstraintName("FK_Comment_User");
         });
 
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);

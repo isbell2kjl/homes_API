@@ -122,7 +122,7 @@ app.UseCors(builder => builder
     .AllowAnyMethod()
     .AllowCredentials());
     
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
