@@ -132,8 +132,8 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            // SameSite = SameSiteMode.None,
-            // Secure = true,
+            SameSite = SameSiteMode.Lax,  //assuming frontend and backend same source, otherwise "none"
+            Secure = true,
             Expires = DateTime.Now.AddDays(7)
         };
         Response.Cookies.Append("refreshToken", token, cookieOptions);
@@ -145,7 +145,7 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            SameSite = SameSiteMode.None,
+            SameSite = SameSiteMode.Lax, //assuming frontend and backend same source, otherwise "none"
             Secure = true,
             Expires = DateTime.Now.AddSeconds(-1), // Set expiration to the past
         };
