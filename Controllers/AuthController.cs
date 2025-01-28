@@ -132,7 +132,7 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            SameSite = SameSiteMode.Lax,  //assuming frontend and backend same source, otherwise "none"
+            SameSite = SameSiteMode.None,
             Secure = true,
             Expires = DateTime.Now.AddDays(7)
         };
@@ -145,7 +145,7 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            SameSite = SameSiteMode.Lax, //assuming frontend and backend same source, otherwise "none"
+            SameSite = SameSiteMode.None,
             Secure = true,
             Expires = DateTime.Now.AddSeconds(-1), // Set expiration to the past
         };

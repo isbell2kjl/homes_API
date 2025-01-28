@@ -17,7 +17,16 @@ public class RecaptchaService : IRecaptchaService
 
     public async Task<bool> VerifyRecaptcha(string token)
     {
-        var secretKey = _config["RecaptchaSecretKey"];
+
+        // Attempt to get the secretKey from environment variables first
+        var secretKey = Environment.GetEnvironmentVariable("RecaptchaSecretKey");
+
+        // If not found in the environment variable, fallback to _config
+        if (string.IsNullOrEmpty(secretKey))
+        {
+            secretKey = _config["RecaptchaSecretKey"];
+        }
+
         var httpClient = _httpClientFactory.CreateClient();
 
         // Send the request to the reCAPTCHA API with the secret and token

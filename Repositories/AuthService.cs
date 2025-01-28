@@ -26,6 +26,7 @@ public class AuthService : IAuthService
         _config = config;
         _emailRepository = emailRepository;
         _forgotPasswordRepository = forgotPasswordRepository;
+     
     }
 
 
@@ -62,6 +63,7 @@ public class AuthService : IAuthService
     {
         var secret = _config.GetValue<String>("TokenSecret");
         var issuer = _config.GetValue<String>("Issuer");
+        
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
         // Create Signature using secret signing key

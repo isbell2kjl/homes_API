@@ -21,8 +21,14 @@ public class PostDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // connect to mysql with connection string from app settings
-        var connectionString = Configuration.GetConnectionString("Default");
+ // First, attempt to get the connection string from an environment variable
+    var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
+    // If not found, fall back to appsettings.json
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        connectionString = Configuration.GetConnectionString("Default");
+    }
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
     
