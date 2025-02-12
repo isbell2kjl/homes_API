@@ -4,11 +4,9 @@ namespace homes_API.Models;
 
 public class Project
 {
-//Default values here unable to set at database level as they are longtext properties.
-//Blank defaults here are set at database level except email which is set by user.
     public int ProjectId { get; set; }
-    public string? ProjectName { get; set; }  
     [Required]
+    public string? ProjectName { get; set; }  
     public string? SiteName { get; set; }
     public string? MainTitle { get; set; }
     public string? MainText { get; set; } 
@@ -20,8 +18,8 @@ public class Project
     public string? RightTitle { get; set; }
     public string? RightText { get; set; }
     public string? ContactText { get; set; }
-    public string? ContactEmail{ get; set; }
     [Required]
+    public string? ContactEmail{ get; set; }
     public string? ContactPhone { get; set; }
     public DateTime? Created { get; set; }
     public DateTime? UpdatedAt { get; set; }

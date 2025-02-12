@@ -10,16 +10,6 @@ using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// // Ensure environment variables are loaded before appsettings.json
-// builder.Configuration
-//     .SetBasePath(Directory.GetCurrentDirectory())
-//     .AddEnvironmentVariables()  // Load from environment variables first
-//     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true); // Then fall back to appsettings.json
-
-// // Register configuration so it can be injected everywhere
-// builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-
-
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

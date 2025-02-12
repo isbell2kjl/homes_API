@@ -11,14 +11,11 @@ namespace homes_API.Repositories;
 public class EmailRepository : IEmailRepository
 {
     private readonly AppSettings _appSettings;
-    // private readonly string _smtpPass;
 
     public EmailRepository(IOptions<AppSettings> appSettings)
     {
         _appSettings = appSettings.Value;
 
-        // Check environment variable first, fallback to appsettings.json
-        // _smtpPass = Environment.GetEnvironmentVariable("SmtpPass") ?? _appSettings.SmtpPass;
     }
 
     public void Send(string to, string subject, string html, string from = "")
@@ -27,19 +24,19 @@ public class EmailRepository : IEmailRepository
         SendEmail(to, subject, html, from);
     }
 
-    public void SendWithAttachment(string to, string subject, string html, Stream attachmentStream, string fileName = "", string from = "")
-    {
-        var attachments = new List<(Stream, string)>();
+    // public void SendWithAttachment(string to, string subject, string html, Stream attachmentStream, string fileName = "", string from = "")
+    // {
+    //     var attachments = new List<(Stream, string)>();
 
-        // Add attachment if provided
-        if (attachmentStream != null)
-        {
-            attachments.Add((attachmentStream, fileName));
-        }
+    //     // Add attachment if provided
+    //     if (attachmentStream != null)
+    //     {
+    //         attachments.Add((attachmentStream, fileName));
+    //     }
 
-        // Call common method with list of attachments
-        SendEmail(to, subject, html, from, attachments);
-    }
+    //     // Call common method with list of attachments
+    //     SendEmail(to, subject, html, from, attachments);
+    // }
 
     public void SendWithMultipleAttachments(string to, string subject, string html, List<(Stream Stream, string FileName)> attachments, string from = "")
     {
@@ -59,7 +56,7 @@ public class EmailRepository : IEmailRepository
         }
 
         // Now use smtpPass as needed
-        Console.WriteLine($"Using SmtpPass: {smtpPass}");
+        // Console.WriteLine($"Using SmtpPass: {smtpPass}");
 
         // Create message
         var email = new MimeMessage();

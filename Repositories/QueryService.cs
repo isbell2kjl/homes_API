@@ -20,97 +20,97 @@ public class QueryService : IQueryService
 
     }
 
-    public async Task GetQueryResultProperties(int projectId)
-    {
-        var result = await _context.Posts
-        .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
-        .OrderByDescending(p => p.PostId)
-        .Take(5)
-        .Select(p => new
-        {
-            Combined = p.Title + ", " + p.Content,
-            p.User.Project.ContactEmail
-        })
-        .ToListAsync();
+    // public async Task GetQueryResultProperties(int projectId)
+    // {
+    //     var result = await _context.Posts
+    //     .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
+    //     .OrderByDescending(p => p.PostId)
+    //     .Take(5)
+    //     .Select(p => new
+    //     {
+    //         Combined = p.Title + ", " + p.Content,
+    //         p.User.Project.ContactEmail
+    //     })
+    //     .ToListAsync();
 
-        if (!result.Any())
-        {
-            Console.WriteLine($"No posts found for ProjectId: {projectId}");
-            return;
-        }
+    //     if (!result.Any())
+    //     {
+    //         Console.WriteLine($"No posts found for ProjectId: {projectId}");
+    //         return;
+    //     }
 
-        // Create CSV content without headers and without ContactEmail
-        var csvContent = "";
-        foreach (var item in result)
-        {
-            csvContent += $"{item.Combined}\n"; // Only include the Combined field
-        }
+    //     // Create CSV content without headers and without ContactEmail
+    //     var csvContent = "";
+    //     foreach (var item in result)
+    //     {
+    //         csvContent += $"{item.Combined}\n"; // Only include the Combined field
+    //     }
 
-        // Create memory stream for attachment
-        var csvStream = new MemoryStream();
-        var writer = new StreamWriter(csvStream);
-        writer.Write(csvContent);
-        writer.Flush();
-        csvStream.Position = 0;
+    //     // Create memory stream for attachment
+    //     var csvStream = new MemoryStream();
+    //     var writer = new StreamWriter(csvStream);
+    //     writer.Write(csvContent);
+    //     writer.Flush();
+    //     csvStream.Position = 0;
 
-        var contactEmail = result.First().ContactEmail;
-        var subject = "Weekly Report: Latest Posts";
+    //     var contactEmail = result.First().ContactEmail;
+    //     var subject = "Weekly Report: Latest Posts";
 
-        // Generate filename based on the current date
-        var currentDate = DateTime.Now.ToString("yyyy_MM_dd");
-        var fileName = $"{currentDate}_properties.csv";
+    //     // Generate filename based on the current date
+    //     var currentDate = DateTime.Now.ToString("yyyy_MM_dd");
+    //     var fileName = $"{currentDate}_properties.csv";
 
-        // Send email with CSV attachment
-        _emailRepository.SendWithAttachment(contactEmail, subject, "Please find the weekly report attached.", csvStream, fileName);
+    //     // Send email with CSV attachment
+    //     _emailRepository.SendWithAttachment(contactEmail, subject, "Please find the weekly report attached.", csvStream, fileName);
 
-        Console.WriteLine($"Email sent to {contactEmail} with CSV attachment.");
-    }
+    //     Console.WriteLine($"Email sent to {contactEmail} with CSV attachment.");
+    // }
 
-    public async Task GetQueryResultTasks(int projectId)
-    {
-        // Query to get Title and Text with the specified conditions
-        var result = await _context.Posts
-           .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
-            .SelectMany(p => p.Comments.Select(c => new
-            {
-                p.Title,
-                c.Text
-            }))
-            .ToListAsync();
+    // public async Task GetQueryResultTasks(int projectId)
+    // {
+    //     // Query to get Title and Text with the specified conditions
+    //     var result = await _context.Posts
+    //        .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
+    //         .SelectMany(p => p.Comments.Select(c => new
+    //         {
+    //             p.Title,
+    //             c.Text
+    //         }))
+    //         .ToListAsync();
 
-        // Create CSV content without headers
-        var csvContent = "";
-        foreach (var item in result)
-        {
-            csvContent += $"{item.Title}, {item.Text}\n";
-        }
+    //     // Create CSV content without headers
+    //     var csvContent = "";
+    //     foreach (var item in result)
+    //     {
+    //         csvContent += $"{item.Title}, {item.Text}\n";
+    //     }
 
-        // Create memory stream for attachment
-        using var csvStream = new MemoryStream();
-        using var writer = new StreamWriter(csvStream);
-        writer.Write(csvContent);
-        writer.Flush();
-        csvStream.Position = 0;
+    //     // Create memory stream for attachment
+    //     using var csvStream = new MemoryStream();
+    //     using var writer = new StreamWriter(csvStream);
+    //     writer.Write(csvContent);
+    //     writer.Flush();
+    //     csvStream.Position = 0;
 
-        // Generate filename based on current date
-        var currentDate = DateTime.Now.ToString("yyyy_MM_dd");
-        var fileName = $"{currentDate}_actions.csv";
+    //     // Generate filename based on current date
+    //     var currentDate = DateTime.Now.ToString("yyyy_MM_dd");
+    //     var fileName = $"{currentDate}_actions.csv";
 
-        // Get contact email from the related project
-        var contactEmail = await _context.Projects
-            .Where(p => p.ProjectId == projectId)
-            .Select(p => p.ContactEmail)
-            .FirstOrDefaultAsync();
+    //     // Get contact email from the related project
+    //     var contactEmail = await _context.Projects
+    //         .Where(p => p.ProjectId == projectId)
+    //         .Select(p => p.ContactEmail)
+    //         .FirstOrDefaultAsync();
 
-        if (string.IsNullOrEmpty(contactEmail))
-            throw new Exception("No contact email found for the specified project.");
+    //     if (string.IsNullOrEmpty(contactEmail))
+    //         throw new Exception("No contact email found for the specified project.");
 
-        // Subject for the email
-        var subject = "Weekly Report: Post Details";
+    //     // Subject for the email
+    //     var subject = "Weekly Report: Post Details";
 
-        // Send email with CSV attachment
-        _emailRepository.SendWithAttachment(contactEmail, subject, "Please find your weekly post actions report attached.", csvStream, fileName);
-    }
+    //     // Send email with CSV attachment
+    //     _emailRepository.SendWithAttachment(contactEmail, subject, "Please find your weekly post actions report attached.", csvStream, fileName);
+    // }
 
     public async Task QueryAndSendReports(int projectId)
     {

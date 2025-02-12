@@ -1,7 +1,6 @@
 using homes_API.Migrations;
 using homes_API.Models;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Ocsp;
 
 namespace homes_API.Repositories;
 
@@ -22,58 +21,58 @@ public class ProjectRepository : IProjectRepository
     }
 
     public Project? UpdateProject(Project newProject)
-{
-    var originalProject = _context.Projects!.Find(newProject.ProjectId);
-    if (originalProject != null)
     {
-        // Update only non-null or non-empty fields
-        if (!string.IsNullOrEmpty(newProject.ProjectName))
-            originalProject.ProjectName = newProject.ProjectName;
+        var originalProject = _context.Projects!.Find(newProject.ProjectId);
+        if (originalProject != null)
+        {
+            // Update only non-null or non-empty fields
+            if (!string.IsNullOrEmpty(newProject.ProjectName))
+                originalProject.ProjectName = newProject.ProjectName;
 
-        if (!string.IsNullOrEmpty(newProject.ContactEmail))
-            originalProject.ContactEmail = newProject.ContactEmail;
+            if (!string.IsNullOrEmpty(newProject.ContactEmail))
+                originalProject.ContactEmail = newProject.ContactEmail;
 
-        // Optional fields - update if provided
-        if (!string.IsNullOrEmpty(newProject.SiteName))
-            originalProject.SiteName = newProject.SiteName;
-        
-        if (!string.IsNullOrEmpty(newProject.MainTitle))
-            originalProject.MainTitle = newProject.MainTitle;
-        
-        if (!string.IsNullOrEmpty(newProject.MainText))
-            originalProject.MainText = newProject.MainText;
+            // Optional fields - update if provided
+            if (!string.IsNullOrEmpty(newProject.SiteName))
+                originalProject.SiteName = newProject.SiteName;
 
-        if (!string.IsNullOrEmpty(newProject.Tagline))
-            originalProject.Tagline = newProject.Tagline;
-        
-        if (!string.IsNullOrEmpty(newProject.LeftTitle))
-            originalProject.LeftTitle = newProject.LeftTitle;
+            if (!string.IsNullOrEmpty(newProject.MainTitle))
+                originalProject.MainTitle = newProject.MainTitle;
 
-        if (!string.IsNullOrEmpty(newProject.LeftText))
-            originalProject.LeftText = newProject.LeftText;
+            if (!string.IsNullOrEmpty(newProject.MainText))
+                originalProject.MainText = newProject.MainText;
 
-        if (!string.IsNullOrEmpty(newProject.CenterTitle))
-            originalProject.CenterTitle = newProject.CenterTitle;
+            if (!string.IsNullOrEmpty(newProject.Tagline))
+                originalProject.Tagline = newProject.Tagline;
 
-        if (!string.IsNullOrEmpty(newProject.CenterText))
-            originalProject.CenterText = newProject.CenterText;
+            if (!string.IsNullOrEmpty(newProject.LeftTitle))
+                originalProject.LeftTitle = newProject.LeftTitle;
 
-        if (!string.IsNullOrEmpty(newProject.RightTitle))
-            originalProject.RightTitle = newProject.RightTitle;
+            if (!string.IsNullOrEmpty(newProject.LeftText))
+                originalProject.LeftText = newProject.LeftText;
 
-        if (!string.IsNullOrEmpty(newProject.RightText))
-            originalProject.RightText = newProject.RightText;
+            if (!string.IsNullOrEmpty(newProject.CenterTitle))
+                originalProject.CenterTitle = newProject.CenterTitle;
 
-        if (!string.IsNullOrEmpty(newProject.ContactText))
-            originalProject.ContactText = newProject.ContactText;
+            if (!string.IsNullOrEmpty(newProject.CenterText))
+                originalProject.CenterText = newProject.CenterText;
 
-        if (!string.IsNullOrEmpty(newProject.ContactPhone))
-            originalProject.ContactPhone = newProject.ContactPhone;
+            if (!string.IsNullOrEmpty(newProject.RightTitle))
+                originalProject.RightTitle = newProject.RightTitle;
 
-        _context.SaveChanges();
+            if (!string.IsNullOrEmpty(newProject.RightText))
+                originalProject.RightText = newProject.RightText;
+
+            if (!string.IsNullOrEmpty(newProject.ContactText))
+                originalProject.ContactText = newProject.ContactText;
+
+            if (!string.IsNullOrEmpty(newProject.ContactPhone))
+                originalProject.ContactPhone = newProject.ContactPhone;
+
+            _context.SaveChanges();
+        }
+        return originalProject;
     }
-    return originalProject;
-}
 
 
     public Project GetProjectById(int projectId)
@@ -92,10 +91,13 @@ public class ProjectRepository : IProjectRepository
         }
     }
 
-    public Project GetProjectFirstRow()
+    public Project? GetProjectFirstRow()
     {
-        return _context.Projects.FirstOrDefault();
+        return _context.Projects
+            .Where(p => p.ProjectName != null && p.ContactEmail != null) // Only load valid rows
+            .FirstOrDefault();
     }
+
 
     public async Task<(bool Success, string Message)> RequestToJoinProject(int userId, string projectEmail)
     {
@@ -141,10 +143,10 @@ public class ProjectRepository : IProjectRepository
                 .ToListAsync();
 
             return pendingRequests;
-        } 
+        }
     }
 
-     public async Task<List<PendingRequest>> GetUserRequests(int userId)
+    public async Task<List<PendingRequest>> GetUserRequests(int userId)
     {
         {
             var pendingRequests = await _context.Requests
@@ -162,7 +164,7 @@ public class ProjectRepository : IProjectRepository
                 .ToListAsync();
 
             return pendingRequests;
-        } 
+        }
     }
 
     public async Task<bool> EmailExists(string email)
