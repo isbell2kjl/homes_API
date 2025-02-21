@@ -20,108 +20,21 @@ public class QueryService : IQueryService
 
     }
 
-    // public async Task GetQueryResultProperties(int projectId)
-    // {
-    //     var result = await _context.Posts
-    //     .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
-    //     .OrderByDescending(p => p.PostId)
-    //     .Take(5)
-    //     .Select(p => new
-    //     {
-    //         Combined = p.Title + ", " + p.Content,
-    //         p.User.Project.ContactEmail
-    //     })
-    //     .ToListAsync();
-
-    //     if (!result.Any())
-    //     {
-    //         Console.WriteLine($"No posts found for ProjectId: {projectId}");
-    //         return;
-    //     }
-
-    //     // Create CSV content without headers and without ContactEmail
-    //     var csvContent = "";
-    //     foreach (var item in result)
-    //     {
-    //         csvContent += $"{item.Combined}\n"; // Only include the Combined field
-    //     }
-
-    //     // Create memory stream for attachment
-    //     var csvStream = new MemoryStream();
-    //     var writer = new StreamWriter(csvStream);
-    //     writer.Write(csvContent);
-    //     writer.Flush();
-    //     csvStream.Position = 0;
-
-    //     var contactEmail = result.First().ContactEmail;
-    //     var subject = "Weekly Report: Latest Posts";
-
-    //     // Generate filename based on the current date
-    //     var currentDate = DateTime.Now.ToString("yyyy_MM_dd");
-    //     var fileName = $"{currentDate}_properties.csv";
-
-    //     // Send email with CSV attachment
-    //     _emailRepository.SendWithAttachment(contactEmail, subject, "Please find the weekly report attached.", csvStream, fileName);
-
-    //     Console.WriteLine($"Email sent to {contactEmail} with CSV attachment.");
-    // }
-
-    // public async Task GetQueryResultTasks(int projectId)
-    // {
-    //     // Query to get Title and Text with the specified conditions
-    //     var result = await _context.Posts
-    //        .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
-    //         .SelectMany(p => p.Comments.Select(c => new
-    //         {
-    //             p.Title,
-    //             c.Text
-    //         }))
-    //         .ToListAsync();
-
-    //     // Create CSV content without headers
-    //     var csvContent = "";
-    //     foreach (var item in result)
-    //     {
-    //         csvContent += $"{item.Title}, {item.Text}\n";
-    //     }
-
-    //     // Create memory stream for attachment
-    //     using var csvStream = new MemoryStream();
-    //     using var writer = new StreamWriter(csvStream);
-    //     writer.Write(csvContent);
-    //     writer.Flush();
-    //     csvStream.Position = 0;
-
-    //     // Generate filename based on current date
-    //     var currentDate = DateTime.Now.ToString("yyyy_MM_dd");
-    //     var fileName = $"{currentDate}_actions.csv";
-
-    //     // Get contact email from the related project
-    //     var contactEmail = await _context.Projects
-    //         .Where(p => p.ProjectId == projectId)
-    //         .Select(p => p.ContactEmail)
-    //         .FirstOrDefaultAsync();
-
-    //     if (string.IsNullOrEmpty(contactEmail))
-    //         throw new Exception("No contact email found for the specified project.");
-
-    //     // Subject for the email
-    //     var subject = "Weekly Report: Post Details";
-
-    //     // Send email with CSV attachment
-    //     _emailRepository.SendWithAttachment(contactEmail, subject, "Please find your weekly post actions report attached.", csvStream, fileName);
-    // }
-
     public async Task QueryAndSendReports(int projectId)
-    {
-        // Generate "properties" report
-        var propertiesResult = await _context.Posts
-            .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
+    { 
+       var propertiesResult = await _context.Posts
+            .Where(p => p.User.ProjId_fk == projectId && p.Archive == 0)
             .OrderByDescending(p => p.PostId)
-            .Select(p => new { Combined = $"{p.Title}, {p.Content}" })
+            .Select(p => new { p.Title, p.Content }) // Fetch data only
             .ToListAsync();
 
-        var propertiesCsvContent = string.Join("\n", propertiesResult.Select(r => r.Combined));
+        // Move string concatenation to C#
+        var formattedProperties = propertiesResult
+            .Select(p => $"{p.Title}, {p.Content}")
+            .ToList();
+
+        var propertiesCsvContent = string.Join("\n", propertiesResult.Select(r => $"{r.Title}, {r.Content}"));
+
         var propertiesStream = new MemoryStream();
         using (var writer = new StreamWriter(propertiesStream, leaveOpen: true))
         {
@@ -131,10 +44,11 @@ public class QueryService : IQueryService
         }
 
         // Generate "actions" report
-        var actionsResult = await _context.Posts
-            .Where(p => p.User.Project.ProjectId == projectId && p.Archive == 0)
-            .OrderByDescending(p => p.PostId)
-            .SelectMany(p => p.Comments.Select(c => new { p.Title, c.Text }))
+
+        var actionsResult = await _context.Comments
+            .Where(c => c.Post.User.Project.ProjectId == projectId && c.Post.Archive == 0)
+            .OrderByDescending(c => c.Post.PostId)
+            .Select(c => new { c.Post.Title, c.Text })
             .ToListAsync();
 
         var actionsCsvContent = string.Join("\n", actionsResult.Select(r => $"{r.Title}, {r.Text}"));
@@ -151,11 +65,9 @@ public class QueryService : IQueryService
         var propertiesFileName = $"{currentDate}_properties.csv";
         var actionsFileName = $"{currentDate}_actions.csv";
 
-        // Get contact email
-        var contactEmail = await _context.Projects
-            .Where(p => p.ProjectId == projectId)
-            .Select(p => p.ContactEmail)
-            .FirstOrDefaultAsync();
+
+        var project = await _context.Projects.FindAsync(projectId);
+        var contactEmail = project?.ContactEmail;
 
         if (string.IsNullOrEmpty(contactEmail))
             throw new Exception("No contact email found for the specified project.");

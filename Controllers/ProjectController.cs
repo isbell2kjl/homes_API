@@ -106,20 +106,7 @@ public class ProjectController : ControllerBase
         return NoContent();
     }
 
-    // [HttpGet("test-send-email/{projectId}")]
-    // public async Task<IActionResult> TestSendEmail(int projectId)
-    // {
-    //     await _queryService.GetQueryResultProperties(projectId);
-    //     return Ok("Email test completed.");
-    // }
-
-    //  [HttpGet("test-send-email-details/{projectId}")]
-    // public async Task<IActionResult> TestSendEmailDetails(int projectId)
-    // {
-    //     await _queryService.GetQueryResultTasks(projectId);
-    //     return Ok("Email test completed.");
-    // }
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] 
     [HttpGet("send-weekly-reports/{projectId}")]
     public async Task<IActionResult> QueryAndSendReports(int projectId)
     {
