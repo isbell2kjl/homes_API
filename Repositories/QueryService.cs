@@ -21,19 +21,19 @@ public class QueryService : IQueryService
     }
 
     public async Task QueryAndSendReports(int projectId)
-    { 
-       var propertiesResult = await _context.Posts
-            .Where(p => p.User.ProjId_fk == projectId && p.Archive == 0)
-            .OrderByDescending(p => p.PostId)
-            .Select(p => new { p.Title, p.Content }) // Fetch data only
-            .ToListAsync();
+    {
+        var propertiesResult = await _context.Posts
+             .Where(p => p.User.ProjId_fk == projectId && p.Archive == 0)
+             .OrderByDescending(p => p.PostId)
+             .Select(p => new { p.Title, p.Content }) // Fetch data only
+             .ToListAsync();
 
         // Move string concatenation to C#
         var formattedProperties = propertiesResult
-            .Select(p => $"{p.Title}, {p.Content}")
+            .Select(p => $"{p.Title.TrimStart()}, {p.Content.TrimStart()}")
             .ToList();
 
-        var propertiesCsvContent = string.Join("\n", propertiesResult.Select(r => $"{r.Title}, {r.Content}"));
+        var propertiesCsvContent = string.Join("\n", propertiesResult.Select(r => $"{r.Title.TrimStart()}, {r.Content.TrimStart()}"));
 
         var propertiesStream = new MemoryStream();
         using (var writer = new StreamWriter(propertiesStream, leaveOpen: true))
@@ -51,7 +51,7 @@ public class QueryService : IQueryService
             .Select(c => new { c.Post.Title, c.Text })
             .ToListAsync();
 
-        var actionsCsvContent = string.Join("\n", actionsResult.Select(r => $"{r.Title}, {r.Text}"));
+        var actionsCsvContent = string.Join("\n", actionsResult.Select(r => $"{r.Title.TrimStart()}, {r.Text.TrimStart()}"));
         var actionsStream = new MemoryStream();
         using (var writer = new StreamWriter(actionsStream, leaveOpen: true))
         {
