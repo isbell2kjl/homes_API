@@ -113,7 +113,6 @@ public class PostRepository : IPostRepository
             originalPost.PhotoURL = newPost.PhotoURL;
             originalPost.Visible = newPost.Visible;
             originalPost.Archive = newPost.Archive;
-            originalPost.Posted = DateTime.Now;
             _context.SaveChanges();
         }
         return originalPost;
