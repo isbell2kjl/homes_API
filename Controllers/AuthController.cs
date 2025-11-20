@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
+using MailKit.Net.Smtp;
 
 
 namespace homes_API.Controllers;
@@ -43,10 +44,13 @@ public class AuthController : ControllerBase
     public ActionResult<SignInResponse> SignIn(SignInRequest request)
     {
         var response = _authService.SignIn(request);
-        setTokenCookie(response.RefreshToken);
+
 
         if (response == null)
             return BadRequest(new { message = "Username or password is incorrect" });
+
+         // Set cookie only after ensuring the response is valid
+        setTokenCookie(response.RefreshToken);
 
         return Ok(new
         {
@@ -100,8 +104,28 @@ public class AuthController : ControllerBase
     [Route("forgot-password")]
     public IActionResult ForgotPassword(ForgotPasswordRequest model)
     {
-        _forgotPasswordRepository.ForgotPassword(model, Request.Headers["origin"]!);
-        return Ok(new { message = "Please check your email for password reset instructions" });
+        try
+        {
+            _forgotPasswordRepository.ForgotPassword(model, Request.Headers["origin"]!);
+            return Ok(new { message = "Please check your email for password reset instructions" });
+        }
+        catch (FormatException ex)
+        {
+            // This often happens if the email address format is incorrect for MimeKit
+            _logger.LogError(ex, "Invalid email format.");
+            return BadRequest(new { message = "The email address format is invalid." });
+        }
+        catch (SmtpCommandException ex)
+        {
+            _logger.LogError(ex, "SMTP command failed during password reset email.");
+            return StatusCode(500, new { message = "Email sending failed due to server error. Please try again later." });
+        }
+        catch (Exception ex)
+        {
+            // General fallback
+            _logger.LogError(ex, "An unexpected error occurred. Please try again later");
+            return StatusCode(500, new { message = ex.Message });
+        }
     }
 
     //Post route to verify that provided token matches database and that 

@@ -128,7 +128,7 @@ public class AuthService : IAuthService
 
         if (user == null || !verified)
         {
-            return null!;
+            return null;
         }
 
         // Create & return JWT

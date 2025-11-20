@@ -46,29 +46,28 @@ public class EmailRepository : IEmailRepository
 
     private void SendEmail(string to, string subject, string html, string from, List<(Stream Stream, string FileName)> attachments = null)
     {
-        // Attempt to get the SmtpPass from environment variables first
-        var smtpPass = Environment.GetEnvironmentVariable("SmtpPass");
+        if (string.IsNullOrWhiteSpace(to))
+            throw new ArgumentException("Recipient email address is required.", nameof(to));
 
-        // If not found in the environment variable, fallback to _appSettings
-        if (string.IsNullOrEmpty(smtpPass))
-        {
-            smtpPass = _appSettings.SmtpPass;
-        }
+        if (!MailboxAddress.TryParse(to, out var toAddress))
+            throw new FormatException($"Invalid recipient email address: '{to}'");
 
-        // Now use smtpPass as needed
-        // Console.WriteLine($"Using SmtpPass: {smtpPass}");
+        string fromValue = from ?? _appSettings.EmailFrom;
 
-        // Create message
+        if (string.IsNullOrWhiteSpace(fromValue))
+            throw new ArgumentException("Sender email address is required.", nameof(from));
+
+        if (!MailboxAddress.TryParse(fromValue, out var fromAddress))
+            throw new FormatException($"Invalid sender email address: '{fromValue}'");
+
         var email = new MimeMessage();
-        email.From.Add(MailboxAddress.Parse(from ?? _appSettings.EmailFrom));
-        email.To.Add(MailboxAddress.Parse(to));
+        email.From.Add(fromAddress);
+        email.To.Add(toAddress);
         email.Subject = subject;
 
-        // Email body
         var body = new TextPart(TextFormat.Html) { Text = html };
         var multipart = new Multipart("mixed") { body };
 
-        // Attach files if attachments are provided
         if (attachments != null && attachments.Count > 0)
         {
             foreach (var (stream, fileName) in attachments)
@@ -84,14 +83,16 @@ public class EmailRepository : IEmailRepository
             }
         }
 
-        // Set the email body
         email.Body = multipart;
 
-        // Send email
         using var smtp = new SmtpClient();
         smtp.Connect(_appSettings.SmtpHost, _appSettings.SmtpPort, SecureSocketOptions.StartTls);
+
+        var smtpPass = Environment.GetEnvironmentVariable("SmtpPass") ?? _appSettings.SmtpPass;
         smtp.Authenticate(_appSettings.SmtpUser, smtpPass);
+
         smtp.Send(email);
         smtp.Disconnect(true);
     }
+
 }
