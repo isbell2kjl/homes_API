@@ -45,11 +45,18 @@ public class AuthController : ControllerBase
     {
         var response = _authService.SignIn(request);
 
-
         if (response == null)
-            return BadRequest(new { message = "Username or password is incorrect" });
+        {
+            //allow Fail2Ban on webserver to detect user and ip address of failed logins.
+            var ip = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
+            ?? HttpContext.Connection.RemoteIpAddress?.ToString();
 
-         // Set cookie only after ensuring the response is valid
+            _logger.LogWarning("LOGIN FAILED from IP {IP} for username {Username}", ip, request.UserName);
+
+
+            return Unauthorized(new { message = "Invalid login" });
+        }
+
         setTokenCookie(response.RefreshToken);
 
         return Ok(new
@@ -57,9 +64,9 @@ public class AuthController : ControllerBase
             userId = response.Id,
             username = response.UserName,
             token = response.Token
-            // Other user details...
         });
     }
+
 
     [HttpPost("refresh-token")]
     public IActionResult RefreshToken()

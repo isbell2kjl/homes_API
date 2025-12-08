@@ -6,9 +6,22 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.RateLimiting;
-
+//added 12/1/25:
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//added 12/1/25
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    // Allow all networks (you are behind Nginx only)
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddControllers();
 
@@ -29,8 +42,6 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-
-
 // builder.Services.AddSqlite<PostDbContext>("Data Source=homes_API.db");
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
@@ -49,7 +60,7 @@ builder.Services.AddScoped<IQueryService, QueryService>();
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
-var secretKey = Environment.GetEnvironmentVariable("TokenSecret") 
+var secretKey = Environment.GetEnvironmentVariable("TokenSecret")
                 ?? builder.Configuration.GetValue<string>("TokenSecret");
 var issuer = builder.Configuration["Issuer"];
 
@@ -126,7 +137,11 @@ app.UseCors(builder => builder
     .AllowAnyMethod()
     .AllowCredentials());
 
+//added 12/1/25:
+app.UseForwardedHeaders();    
+
 // app.UseHttpsRedirection();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
