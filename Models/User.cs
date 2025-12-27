@@ -35,6 +35,7 @@ public class User
     public sbyte? Role { get; set; } = 0;
 
     public List<Post>? Posts { get; set; }
+    public List<Job>? Jobs { get; set; }
     public List<Comment>? Comments { get; set; }
     public List<Request>? Requests { get; set; }
     public Project? Project { get; set; }

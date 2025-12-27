@@ -11,6 +11,7 @@ public class PostDbContext : DbContext
     public DbSet<Request>? Requests { get; set; }
     public DbSet<Post>? Posts { get; set; }
     public DbSet<Comment>? Comments { get; set; }
+    public DbSet<Job>? Jobs { get; set; }
 
     protected readonly IConfiguration Configuration;
 
@@ -106,6 +107,20 @@ public class PostDbContext : DbContext
                 .WithMany(e => e.Requests)
                 .HasForeignKey(e => e.ProjectId)
                 .HasConstraintName("FK_Request_Project");
+        });
+
+        modelBuilder.Entity<Job>(entity =>
+        {
+            entity.HasKey(j => j.JobId);
+            entity.Property(j => j.Title).IsRequired();
+            entity.Property(j => j.Completed);
+            entity.Property(j => j.Created).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(j => j.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+            entity.HasOne(u => u.User)
+            .WithMany(j => j.Jobs)
+            .HasForeignKey(j => j.UserId_fk)
+            .OnDelete(DeleteBehavior.Cascade)
+            .HasConstraintName("FK_Job_User");
         });
 
         modelBuilder.Entity<Post>(entity =>

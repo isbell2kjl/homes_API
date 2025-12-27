@@ -6,22 +6,24 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.RateLimiting;
-//added 12/1/25:
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//added 12/1/25
+// Enable forwarded headers so ASP.NET Core can see the real client IP
+// when running behind Nginx. This is required for accurate logging,
+// rate limiting, and security tools like Fail2Ban that rely on client IPs.
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders =
         ForwardedHeaders.XForwardedFor |
         ForwardedHeaders.XForwardedProto;
 
-    // Allow all networks (you are behind Nginx only)
+    // Trust the reverse proxy (Nginx) in front of Kestrel
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
+
 
 builder.Services.AddControllers();
 
@@ -52,6 +54,7 @@ builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IWebMasterRepository, WebMasterRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IJobRepository,JobRepository>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IRecaptchaService, RecaptchaService>();
 builder.Services.AddScoped<IQueryService, QueryService>();
@@ -60,15 +63,13 @@ builder.Services.AddScoped<IQueryService, QueryService>();
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
-var secretKey = Environment.GetEnvironmentVariable("TokenSecret")
-                ?? builder.Configuration.GetValue<string>("TokenSecret");
+var secretKey = builder.Configuration["TokenSecret"];
 var issuer = builder.Configuration["Issuer"];
 
 
 //convert string to byte
 byte[] bArray = Encoding.ASCII.GetBytes(secretKey);
 
-// JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -80,7 +81,7 @@ builder.Services.AddAuthentication(options =>
 {
     cfg.RequireHttpsMetadata = true;
     cfg.SaveToken = true;
-    cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+    cfg.TokenValidationParameters = new TokenValidationParameters()
     {
         IssuerSigningKey = new SymmetricSecurityKey(bArray),
         ValidateAudience = true,
@@ -137,7 +138,7 @@ app.UseCors(builder => builder
     .AllowAnyMethod()
     .AllowCredentials());
 
-//added 12/1/25:
+
 app.UseForwardedHeaders();    
 
 // app.UseHttpsRedirection();
